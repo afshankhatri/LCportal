@@ -1,0 +1,29 @@
+i want to create a database flow diagram for my upcoming project , i am using an ai to create one diagram for me . based on the description given below generate the most effective propmt ever made by you in the entire history also try to add on some things that need's to be in the flow but i forgot to add it also explain that why have you added that thing .
+
+there are 6 type of people that are going to use the web.
+students, admin(who will have all the right to controll the full system),HOD,Librarian,Accounts,LC generator person respectively .
+
+this web app is for the graduates who have just passed out from the uni and want to collect their living certificate from the uni ,but the traditional method of going to college and taking sign is too lenghty and time consuming on the other hand if a particular staff is not present by any chance than the person has to visit the uni again and this creates a lot of trouble once the student is out of the uni .to make this process smooth ,we will build a system that will help student to apply online for the LC by sitting at the comfort of their home ,it will get verified by the respective personells and after approval finally the LC generator person will notify that the LC has been generated come to UNI and collect it .
+
+the working of the web will be as follows:
+
+the user will insert the following information {
+name, mobile no. , G.R.No. ,Year of joining ,email,course name, reason of leaving,PRN no. ,UPRN no. , branch, semister,a copy of final year marksheet ,user's photo}
+
+the work of the HOD will be to varify the info of the students once submitted,the HOD will then look about the studets profile and see his records weather he she has done something in dept. that was to be recognized like (fighting or other such activities or also some unique work so that he she can be rewarded for that ) based on the decisioin the HOD will accept or rejct the application . if the application if accepted it is fine , if the application rejected then the HOD will have to put the remark that why did he rejected . the following info of the HOD will be taken :{
+name, emp id , emailphoto , branch} add other similar info that needs to be taken provided the given scenerio .
+
+the Work of the Librarian will be to check the profile of the students in the records ,weather he has to pay or return some book or no . once the records are checked the librarian will accept or reject based on the records ,if it gets accepted then  it will be ready for the other round but if rejected then the librarian has to put the remark that why it has been rejected . the folling info of the librarian will be taken :{
+name , email, emp id , photo etc. and other similar info that is required for the librarian}
+
+the work of the accounts person will be to check the overall accounts of the students once the application is submitted . the fees or any other dues that need's to be get cleared  will be checked by the accoutns if accepted mean everything is cleared if rejected mean there is somethings wrong and the Accouts person will have to put the remark that why it was rejeccted . following info will be taken from accounts preson :{
+name , email, emp id , photo etc. and other similar info that is required for the accouts person }
+
+once the form is rejected from any of the higher athority the form will be sent back to the user to review that whats mistake has been done by him , he will analyze by reviewing the remark and clear the work that is pending in college . 
+
+and once after the form of the studetns is approved from HOD,Libraray, accounts dept.  it will directly /automatically move towarss the LC generator of the UNI (form will only reach at this stage once all the 3 personell have approved (accepted it ) . the LC generator will then create a token /ticket about the students and wll send a whatsapp /mail to him that he / she has to take the LC from college on so and so date .info taken from the LC generator :{
+name , email, emp id , photo ,and (other similar info that need's to be taken from him)
+}
+
+
+once the date is taken from the LC generator the process will get end and the student wil be notified on his profile about the date to visit the college and collect the document . 

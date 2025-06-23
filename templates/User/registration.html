@@ -1,0 +1,50 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LC collect</title>
+</head>
+<body>
+    <h2>User Registration</h2>
+    <form action="/registration" method="POST">
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="set_password">Set Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+
+        <label for="phone_no">Phone No.:</label>
+        <input type="text" id="phone_no" name="phone_no" required><br><br>
+
+        <label for="user_type">User Type:</label>
+        <select id="user_type" name="user_type" required>
+            <option value="0">Student</option>
+            <option value="1">Admin</option>
+            <option value="2">HOD</option>
+            <option value="3">Librarian</option>
+            <option value="4">Accounts</option>
+            <option value="5">LC Generator</option>
+        </select>
+        <br><br>
+        <label for="dept">User Type:</label>
+        <select id="dept" name="dept" required>
+            <option value="0">AIML</option>
+            <option value="1">IOT</option>
+            <option value="2">CS</option>
+            <option value="3">IT</option>
+            <option value="4">EXTC</option>
+            <option value="5">MECH</option>
+            <option value="6">CIVIL</option>
+            <option value="7">LIBRARY</option>
+            <option value="8">Accounts</option>
+        </select>
+        <br><br>
+
+        <button type="submit">Register</button>
+    </form>
+</body>
+</html>

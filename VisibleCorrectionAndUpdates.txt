@@ -1,0 +1,22 @@
+in regi. as soon as the person click on hod or studnet it should open 1 more question that is dept. it should go of it person click librarian or accounts as dept. belongs to students and hod only .
+
+at some user or student table in database the email's detatype is given as int instead of varchar ,make it proper.
+
+
+
+
+
+in accounts and in library the view details is not working properly
+
+UPDATES:
+
+ now we need to work on ... giving final dates to the students ,for collecting the LC 
+
+apart from this ,we need to work on rejecting the form 
+
+also if the formis rejected then the interface for the student to make the necessary changes 
+
+also display of remark given at the time of rejectioin should be displayed to the student so that he can make the necessary changes and resubmit the form
+
+
+// now i want it to work in such a way that as soon as i click on approve it should get approved ... at the same time it should get hidden from the hod landing page and get displayed in the accepted forms section ........... or ele what we can do is display all the forms accepted and rejected both... after getting accepted or rejected on landing page it should get colored red for reject and green for accept and white means no operation performed ... also they should also be visible in theri respective pages as well... i.e > in accepted and rejected section 

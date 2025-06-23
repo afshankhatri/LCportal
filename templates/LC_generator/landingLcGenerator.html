@@ -1,0 +1,52 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LC collect</title>
+</head>
+<body>
+    <h2>Landing Page Of LC generator</h2>
+
+
+
+    {% for stud in studentDetails %}
+        <div class="card">
+            <div class="card-body">
+                <!-- <h4><strong>{{stud.name}}</strong></h4> -->
+                <p><strong>G_R_No:</strong> {{stud.GR_no}}</p>
+                <p><strong>Branch:</strong> {{stud.courseName}}</p>
+
+                
+                <button class="btn btn-secondary">View Details</button>
+            </div>
+        </div>  
+    {% endfor %}
+
+
+<!-- testing of code  -->
+
+    <!-- {% if studentDetails %}
+        {% for stud in studentDetails %}
+        <div class="card">
+            <div class="card-body">
+                <p><strong>G_R_No:</strong> {{ stud.GR_no }}</p>
+                <p><strong>Branch:</strong> {{ stud.courseName }}</p>
+                <button class="btn btn-secondary">View Details</button>
+            </div>
+        </div>  
+        {% endfor %}
+    {% else %}
+        <p>No students found with all approvals.</p>
+    {% endif %} -->
+
+
+</body>
+</html>
+
+
+
+<!-- now we need to work on ... giving final dates to the students ,for collecting the LC 
+apart from this ,we need to work on view details button and also on the ,rejecting the form 
+also if the formis rejected then the interface for the student to make the necessary chantes 
+also display of remark given at the time of rejectioin should be displayed to the student so that he can make the necessary changes and resubmit the form
+--> 
