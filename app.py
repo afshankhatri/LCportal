@@ -186,30 +186,13 @@ def adminlanding():
 def hodlanding():
     studentDetails = Student.query.all()
     # print(studentDetails)
-    
-    # if request.method == 'POST':
-    #     # # print(request.form)
-    #     approval_status = request.form.get('approval_status')
-    #     # reject_reason = request.form.get("reject_reason", None) 
-        
-    #     student_id = request.form.get("student_id")  # Get the( student ID = sr_no )from the form
-    #     print(f"Student ID: {student_id}, Approval Status: {approval_status}") 
-        
-    #     stud = Student.query.filter_by(sr_no=student_id).first()
-    #     # print("i am hereeeeeeeeeeeeeee" , student)
-    #     if stud:
-    #         stud.hod_approval_status = approval_status  
-    #         db.session.commit()  # Save changes
-    #         print("Approval status updated successfully!")  # Debugging
-    #     else:
-    #         print("Student not found!") 
-            
-    #     return redirect(url_for("hodlanding"))  
+      
     return render_template("HODs/landingHod.html", studentDetails=studentDetails)
 
 @app.route("/HODacceptedForms")
 def HODacceptedForm():
-    return render_template("HODs/HODacceptedForms.html")
+    studentDetails = Student.query.filter_by(hod_approval_status=1).all()
+    return render_template("HODs/HODacceptedForms.html",studentDetails=studentDetails)
 
 @app.route("/HODrejectedForms")
 def HODrejectedForm():
@@ -281,6 +264,27 @@ def updateApprovalofHOD():
         # ye directly yaha insert nai kar saket request.form kar k kuch karna padega 
         
         
+        print(stud.hod_approval_status)
+        db.session.add(stud)
+        db.session.commit()
+        print("Approval status updated successfully!")
+        return ({"message": "Approval updated successfully"}), 200
+    else:
+        print("Student not found!")
+        return ({"message": "Student not found"}), 404
+    
+@app.route('/updateRejectionOfHOD', methods=['POST'])
+def updateRejectionOfHOD():
+    data = request.get_json()  # get the JSON data sent by JS
+    student_id = data.get('student_id')
+    
+    # studentDetails = Student.query.all()
+    # print(studentDetails)
+    # print(f"Student data received: {studentDetails}")
+
+    stud = Student.query.filter_by(sr_no=student_id).first()
+    if stud:
+        stud.hod_approval_status = 2  # Directly setting 1
         
         print(stud.hod_approval_status)
         db.session.add(stud)
@@ -290,6 +294,8 @@ def updateApprovalofHOD():
     else:
         print("Student not found!")
         return ({"message": "Student not found"}), 404
+
+
     
     
 @app.route('/updateApprovaloflib', methods=['POST'])
@@ -331,6 +337,25 @@ def updateApprovalofacc():
         db.session.commit()
         print("Approval status updated successfully!")
         return ({"message": "Approval updated successfully"}), 200
+    else:
+        print("Student not found!")
+        return ({"message": "Student not found"}), 404
+    
+
+@app.route('/updateRejectionOfacc', methods=['POST'])
+def updateRejectionOfacc():
+    data = request.get_json()  # get the JSON data sent by JS
+    student_id = data.get('student_id')
+    
+
+    stud = Student.query.filter_by(sr_no=student_id).first()
+    if stud:
+        stud.acc_approval_status = 2  # Directly setting 1
+        print(stud.acc_approval_status)
+        db.session.add(stud)
+        db.session.commit()
+        print("Rejection status updated successfully!")
+        return ({"message": "Rejection updated successfully"}), 200
     else:
         print("Student not found!")
         return ({"message": "Student not found"}), 404
