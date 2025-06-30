@@ -15,26 +15,33 @@ function setApproval(studentId) {
     .catch((error) => {
         console.error('Error:', error);
     });
-}
+}  
 
 // for rejection of form
-        function setRejection(studentId) {
-            fetch('/updateRejectionOfHOD', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'  // Important!
-                },
-                body: JSON.stringify({ student_id: studentId })  // sending student ID to backend
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data.message);
-                // You can also update UI here if needed
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-        }
+        // function setRejection(studentId) {
+        //     const hod_rejection_reason = document.getElementById("custom_rejection_reason_input").value;
+        //     const hod_remarks = document.getElementById("remarks_select_field").value;
+        //     console.log(hod_rejection_reason,hod_remarks)
+        //     fetch('/updateRejectionOfHOD', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json'  // Important!
+        //         },
+        //         body: JSON.stringify({ 
+        //             student_id: studentId,
+        //             hod_remarks:hod_remarks,
+        //             hod_rejection_reason:hod_rejection_reason
+        //         })  // sending student ID to backend
+        //     })
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         console.log('Success:', data.message);
+        //         // You can also update UI here if needed
+        //     })
+        //     .catch((error) => {
+        //         console.error('Error:', error);
+        //     });
+        // }
 
         // // open closing model of rejection
         // const rejectModalTriggerBtn = document.getElementById('trigger_reject_modal_button');
@@ -55,8 +62,60 @@ function setApproval(studentId) {
         // window.onclick = function(event) {
         // if (event.target === modalOverlay) {
         //     modalOverlay.style.display = 'none';
-        // }
+        //     }
         // };
+
+
+
+    // 2nd type of rejection
+    // Store current student being rejected
+    function openRejectModal(srNo) {
+  currentStudentId = srNo;
+  document.getElementById("modal_overlay" + srNo).style.display = "block";
+
+  // Set close button click dynamically
+  document.getElementById("close_modal_icon" + srNo).onclick = () => {
+    document.getElementById("modal_overlay" + srNo).style.display = "none";
+  };
+
+  // Also set window click dynamically
+  window.onclick = function(event) {
+    if (event.target === document.getElementById("modal_overlay" + srNo)) {
+      document.getElementById("modal_overlay" + srNo).style.display = "none";
+    }
+  };
+
+  // Finally, attach the Reject button handler here:
+  document.getElementById("modal_reject_button" + srNo).onclick = function() {
+    const hod_remarks = document.getElementById("remarks_select_field" + srNo).value;
+    const hod_rejection_reason = document.getElementById("custom_rejection_reason_input" + srNo).value;
+
+    if (!currentStudentId) {
+      alert("No student selected!");
+      return;
+    }
+
+    fetch('/updateRejectionOfHOD', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        student_id: currentStudentId,
+        hod_remarks: hod_remarks,
+        hod_rejection_reason: hod_rejection_reason
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:', data.message);
+      window.location.reload();
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  };
+}
 
 
 
@@ -65,23 +124,65 @@ function setApproval(studentId) {
 
 
 // for viewing the user info
-function openModal(courseName, userId, branch, GR_no, srNo) {
-    // Populate modal content with the student's data
+// function openModal(courseName, userId, branch, GR_no, srNo) {
+//     // Populate modal content with the student's data
+//     document.getElementById("modalName").innerText = courseName;
+//     document.getElementById("modalEmail").innerText = userId;
+//     document.getElementById("modalBranch").innerText = branch;  
+//     document.getElementById("modalGRNo").innerText = GR_no; 
+    
+//     //Update the Approve button with the correct student ID
+//     const approveBtn = document.getElementById("modalApproveBtn" );
+//     approveBtn.setAttribute("onclick", `setApproval('${srNo}')`);
+    
+//     // Show the modal
+//     document.getElementById("userModal").style.display = "flex";
+// }
+
+// bugg solving of view-details
+function openModal(courseName, userId, branch, GR_no, srNo, hodStatus) {
+    // Fill in text fields
     document.getElementById("modalName").innerText = courseName;
     document.getElementById("modalEmail").innerText = userId;
-            document.getElementById("modalBranch").innerText = branch;  
-    document.getElementById("modalGRNo").innerText = GR_no; 
-    
-    //Update the Approve button with the correct student ID
+    document.getElementById("modalBranch").innerText = branch;
+    document.getElementById("modalGRNo").innerText = GR_no;
+
     const approveBtn = document.getElementById("modalApproveBtn");
-    approveBtn.setAttribute("onclick", `setApproval('${srNo}')`);
-    
-    // Show the modal
+    const rejectBtn = document.getElementById("modalRejectBtn");
+
+    if (hodStatus === "1") {
+        approveBtn.innerText = "Approved";
+        approveBtn.disabled = true;
+        rejectBtn.innerText = "Reject";
+        rejectBtn.disabled = false;
+    } else if (hodStatus === "2") {
+        approveBtn.innerText = "Approve";
+        approveBtn.disabled = false;
+        rejectBtn.innerText = "Rejected";
+        rejectBtn.disabled = true;
+    } else {
+        approveBtn.innerText = "Approve";
+        approveBtn.disabled = false;
+        rejectBtn.innerText = "Reject";
+        rejectBtn.disabled = false;
+    }
+
+    // Update Approve button click handler
+    approveBtn.onclick = function() {
+        this.disabled = true;
+        setApproval(srNo);
+    };
+
+    // Update Reject button click handler
+    rejectBtn.onclick = function() {
+        openRejectModal(srNo);
+    };
+
     document.getElementById("userModal").style.display = "flex";
 }
     
 function closeModal() {
-    document.getElementById("userModal").style.display = "none";
+    document.getElementById("userModal" ).style.display = "none";
 }
     
 // Optional: Close modal on outside click

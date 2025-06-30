@@ -3,8 +3,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LC collect</title>
+
+    <link rel="stylesheet" href="/static/css/HOD/landingHOD.css">
+
 </head>
 <body>
     <h2>this page is for rejected forms</h2>
+
+        {% for stud in studentDetails %}
+        <div class="card">
+            <div class="card-body">
+                <!-- <h4><strong>{{stud.name}}</strong></h4> -->
+                <p><strong>G_R_No:</strong> {{stud.GR_no}}</p>
+                <p><strong>Branch:</strong> {{stud.courseName}}</p>
+
+                
+                <button class="btn btn-secondary" onclick="openModal('{{ stud.courseName }}', '{{ stud.user_id }}', '{{ stud.courseName }}', '{{stud.GR_no}}' ,'{{ stud.sr_no }}') ">View Details</button>
+
+                <!-- Modal for details -->
+                <div class="modal" id="userModal">
+                    <div class="modal-content">
+                        <span class="close-btn" onclick="closeModal()">&times;</span>
+                        <h3>User Details</h3>
+                        <p><strong>Name:</strong> <span id="modalName"></span></p>
+                        <p><strong>Email:</strong> <span id="modalEmail"></span></p>
+                        <p><strong>Branch:</strong> <span id="modalBranch"></span></p>
+                        <p><strong>GR_no:</strong> <span id="modalGRNo"></span></p>
+                        <!-- Add more user info here -->
+                    </div>
+                </div>
+            </div>
+        </div>  
+    {% endfor %}
+
+    <script src="/static/js/HOD/rejectedHOD.js"></script>
+
+
 </body>
 </html>

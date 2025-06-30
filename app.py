@@ -15,7 +15,7 @@ db = SQLAlchemy(app)
 
 
 # ------------------------------- TABLE CLASS DECLARATION -------------------------------
-
+ 
 
 # general user
 class User(db.Model): # .......    user here is the name of the table  ..  given beow are the names and property of the Column
@@ -50,6 +50,13 @@ class Student(db.Model):
     hod_approval_status = db.Column(db.Integer, nullable=True, default=0)  # Add this column
     lib_approval_status = db.Column(db.Integer, nullable=True, default=0)  # Add this column
     acc_approval_status = db.Column(db.Integer, nullable=True, default=0)  # Add this column
+    hod_rejection_reason = db.Column(db.String(255), nullable=True)
+    hod_remarks = db.Column(db.Text, nullable=True)
+    acc_remarks = db.Column(db.Text, nullable=True)
+    acc_rejection_reason = db.Column(db.String(255), nullable=True)
+    lib_remarks = db.Column(db.Text, nullable=True)
+    lib_rejection_reason = db.Column(db.String(255), nullable=True)
+
 
     # Relationship with User table
     user = db.relationship('User', backref=db.backref('students', lazy=True))  # Establishing relationship
@@ -196,7 +203,8 @@ def HODacceptedForm():
 
 @app.route("/HODrejectedForms")
 def HODrejectedForm():
-    return render_template("HODs/HODrejectedForms.html")
+    studentDetails = Student.query.filter_by(hod_approval_status=2).all()
+    return render_template("HODs/HODrejectedForms.html",studentDetails=studentDetails)
 
 
 
@@ -208,11 +216,13 @@ def librarianlanding():
 
 @app.route("/librarianAcceptedForms")
 def librarianAcceptedForm():
-    return render_template("librarian/librarianAcceptedForms.html")
+    studentDetails = Student.query.filter_by(lib_approval_status=1).all()
+    return render_template("librarian/librarianAcceptedForms.html",studentDetails=studentDetails)
 
 @app.route("/librarianRejectedForms")
 def librarianRejectedForm():
-    return render_template("librarian/librarianRejectedForms.html")
+    studentDetails = Student.query.filter_by(lib_approval_status=2).all()
+    return render_template("librarian/librarianRejectedForms.html",studentDetails=studentDetails)
 
 
 
@@ -225,11 +235,13 @@ def accountslanding():
 
 @app.route("/AccountsRejectedForms")
 def AccountsRejectedForm():
-    return render_template("Accounts/AccRejectedForms.html")
+    studentDetails = Student.query.filter_by(acc_approval_status=2).all()
+    return render_template("Accounts/AccRejectedForms.html",studentDetails=studentDetails)
 
 @app.route("/AccountsAcceptedForms")
 def AccountsAcceptedForm():
-    return render_template("Accounts/AccAcceptedForms.html")
+    studentDetails = Student.query.filter_by(acc_approval_status=1).all()
+    return render_template("Accounts/AccAcceptedForms.html",studentDetails=studentDetails)
 
 @app.route("/LCgeneratorPage")
 def lCgeneratorlanding():
@@ -273,43 +285,51 @@ def updateApprovalofHOD():
         print("Student not found!")
         return ({"message": "Student not found"}), 404
     
-@app.route('/updateRejectionOfHOD', methods=['POST'])
+@app.route('/updateRejectionOfHOD', methods=['POST','GET'])
 def updateRejectionOfHOD():
     data = request.get_json()  # get the JSON data sent by JS
     student_id = data.get('student_id')
+    hod_remarks = data.get('hod_remarks')
+    hod_rejection_reason = data.get('hod_rejection_reason')
     
-    # studentDetails = Student.query.all()
-    # print(studentDetails)
-    # print(f"Student data received: {studentDetails}")
+    # if request.method == 'POST':
+        # hod_remarks = request.form['hod_remarks']
+        # hod_rejection_reason  = request.form['hod_rejection_reason']
+        # student_id = request.form['student_id']
 
+#   agar uper wala if k hishaab se chalege to ye niche ka pura if-else us k andar aiga ... abhi filhal k liye dusra method use kia hu isliye bahar leke solve kar ra hu
     stud = Student.query.filter_by(sr_no=student_id).first()
     if stud:
+        stud.hod_rejection_reason = hod_rejection_reason 
+        stud.hod_remarks = hod_remarks  
         stud.hod_approval_status = 2  # Directly setting 1
         
         print(stud.hod_approval_status)
+        print(stud.hod_remarks)
+        print(stud.hod_rejection_reason)
         db.session.add(stud)
         db.session.commit()
-        print("Approval status updated successfully!")
-        return ({"message": "Approval updated successfully"}), 200
+        print("Rejected successfully!")
+        return {"message": "Rejection updated successfully"}, 200
+        # return redirect(url_for('hodlanding'))
+            
     else:
         print("Student not found!")
         return ({"message": "Student not found"}), 404
+     
 
-
+ 
     
     
 @app.route('/updateApprovaloflib', methods=['POST'])
 def updateApprovaloflib():
     data = request.get_json()  # get the JSON data sent by JS
     student_id = data.get('student_id')
-    
-    # studentDetails = Student.query.all()
-    # print(studentDetails)
-    # print(f"Student data received: {studentDetails}")
 
     stud = Student.query.filter_by(sr_no=student_id).first()
     if stud:
-        stud.lib_approval_status = 1  # Directly setting 1
+        stud.lib_approval_status = 1  
+        
         print(stud.lib_approval_status)
         db.session.add(stud)
         db.session.commit()
@@ -317,17 +337,42 @@ def updateApprovaloflib():
         return ({"message": "Approval updated successfully"}), 200
     else:
         print("Student not found!")
+    
+    
+@app.route('/updateRejectionOflib', methods=['POST','GET'])
+def updateRejectionOflib():
+    data = request.get_json()  # get the JSON data sent by JS
+    student_id = data.get('student_id')
+    lib_remarks = data.get('lib_remarks')
+    lib_rejection_reason = data.get('lib_rejection_reason')
+    
+    stud = Student.query.filter_by(sr_no=student_id).first()
+    if stud:
+        stud.lib_rejection_reason = lib_rejection_reason 
+        stud.lib_remarks = lib_remarks  
+        stud.lib_approval_status = 2  # Directly setting 1
+        
+        print(stud.lib_approval_status)
+        print(stud.lib_remarks)
+        print(stud.lib_rejection_reason)
+        db.session.add(stud)
+        db.session.commit()
+        print("Rejected successfully!")
+        return {"message": "Rejection updated successfully"}, 200
+            
+    else:
+        print("Student not found!")
         return ({"message": "Student not found"}), 404
+    
+    
+    
+    
     
     
 @app.route('/updateApprovalofacc', methods=['POST'])
 def updateApprovalofacc():
     data = request.get_json()  # get the JSON data sent by JS
     student_id = data.get('student_id')
-    
-    # studentDetails = Student.query.all()
-    # print(studentDetails)
-    # print(f"Student data received: {studentDetails}")
 
     stud = Student.query.filter_by(sr_no=student_id).first()
     if stud:
@@ -342,20 +387,27 @@ def updateApprovalofacc():
         return ({"message": "Student not found"}), 404
     
 
-@app.route('/updateRejectionOfacc', methods=['POST'])
+@app.route('/updateRejectionOfacc', methods=['POST','GET'])
 def updateRejectionOfacc():
     data = request.get_json()  # get the JSON data sent by JS
     student_id = data.get('student_id')
+    acc_remarks = data.get('acc_remarks')
+    acc_rejection_reason = data.get('acc_rejection_reason')
     
-
     stud = Student.query.filter_by(sr_no=student_id).first()
     if stud:
+        stud.acc_rejection_reason = acc_rejection_reason 
+        stud.acc_remarks = acc_remarks  
         stud.acc_approval_status = 2  # Directly setting 1
+        
         print(stud.acc_approval_status)
+        print(stud.acc_remarks)
+        print(stud.acc_rejection_reason)
         db.session.add(stud)
         db.session.commit()
-        print("Rejection status updated successfully!")
-        return ({"message": "Rejection updated successfully"}), 200
+        print("Rejected successfully!")
+        return {"message": "Rejection updated successfully"}, 200
+            
     else:
         print("Student not found!")
         return ({"message": "Student not found"}), 404
