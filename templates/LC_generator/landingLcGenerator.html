@@ -1,8 +1,10 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LC collect</title>
+    <link rel="stylesheet" href="/static/css/LCgenerator/LCgenerator.css">
 </head>
 <body>
     <h2>Landing Page Of LC generator</h2>
@@ -16,28 +18,42 @@
                 <p><strong>G_R_No:</strong> {{stud.GR_no}}</p>
                 <p><strong>Branch:</strong> {{stud.courseName}}</p>
 
-                
-                <button class="btn btn-secondary">View Details</button>
+                <button class="btn btn-secondary" onclick="openModal('{{ stud.courseName }}', '{{ stud.user_id }}', '{{ stud.courseName }}', '{{stud.GR_no}}' ,'{{ stud.sr_no }}','{{ stud.LCgenerated }}') ">View Details</button>
+
+
+                <button class="btn btn-primary call-button"
+                    data-email="{{ stud.user_id }}"
+                    data-name="{{ stud.name }}">
+                    {% if stud.LCgenerated == 1 %}
+                        Sent
+                    {% else %}
+                        Call Student for Collection
+                    {% endif %}
+                </button>
+
+                <!-- Modal for details starts-->
+                <div class="modal" id="userModal">
+                    <div class="modal-content">
+                        <span class="close-btn" onclick="closeModal()">&times;</span>
+                        <h3>User Details</h3>
+                        <p><strong>Name:</strong> <span id="modalName"></span></p>
+                        <p><strong>Email:</strong> <span id="modalEmail"></span></p>
+                        <p><strong>Branch:</strong> <span id="modalBranch"></span></p>
+                        <p><strong>GR_no:</strong> <span id="modalGRNo"></span></p>
+                        <!-- Add more user info here -->
+                    </div>
+                </div>
+                <!-- Modal for details ends -->
             </div>
         </div>  
     {% endfor %}
 
+    <script src="/static/js/LCgenerator/LCgenerator.js"></script>
+     
 
-<!-- testing of code  -->
-
-    <!-- {% if studentDetails %}
-        {% for stud in studentDetails %}
-        <div class="card">
-            <div class="card-body">
-                <p><strong>G_R_No:</strong> {{ stud.GR_no }}</p>
-                <p><strong>Branch:</strong> {{ stud.courseName }}</p>
-                <button class="btn btn-secondary">View Details</button>
-            </div>
-        </div>  
-        {% endfor %}
-    {% else %}
-        <p>No students found with all approvals.</p>
-    {% endif %} -->
+<!-- interface to give tentitive dates to user to collect the lc  -->
+ <!-- input field for uploading of soft copy once generated  -->
+  <!-- send email to student once generated  with date and time to collect the lc -->
 
 
 </body>

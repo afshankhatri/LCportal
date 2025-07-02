@@ -1,9 +1,12 @@
-
-from flask import Flask,render_template,request,flash,redirect,url_for;
+from flask import Flask,render_template,request,flash,redirect,url_for,session,jsonify;
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import pymysql
 from werkzeug.security import check_password_hash
+import smtplib
+from email.mime.text import MIMEText
+from flask import Flask
+from flask_mail import Mail, Message
 
 pymysql.install_as_MySQLdb()
 
@@ -31,7 +34,7 @@ class User(db.Model): # .......    user here is the name of the table  ..  given
 
 
 # students
-class Student(db.Model):
+class Student(db.Model): 
     __tablename__ = 'student'  # Explicit table name
 
     sr_no = db.Column(db.Integer, primary_key=True, autoincrement=True)  # Auto-increment primary key
@@ -56,6 +59,7 @@ class Student(db.Model):
     acc_rejection_reason = db.Column(db.String(255), nullable=True)
     lib_remarks = db.Column(db.Text, nullable=True)
     lib_rejection_reason = db.Column(db.String(255), nullable=True)
+    LCgenerated = db.Column(db.Integer, nullable=True, default=0)
 
 
     # Relationship with User table
@@ -114,144 +118,252 @@ def signin():
         password = request.form['password']
 
         user = User.query.filter_by(email=email,password=password).first()
-        # print(user.user_type)
-        
+        if user:
+            # Store user data in session
+            # session["user_id"] = user.id          # or user.sr_no / primary key
+            session["user_email"] = user.email
+            session["user_type"] = user.user_type
+
             # Redirect based on user_type
-        # print(user.password)
-        if user.user_type == 0:
-            return redirect(url_for("studentlanding"))
-        elif user.user_type == 1:
-            return redirect(url_for("adminlanding"))
-        elif user.user_type == 2:
-            return redirect(url_for("hodlanding"))
-        elif user.user_type == 3:
-            return redirect(url_for("librarianlanding"))
-        elif user.user_type == 4:
-            return redirect(url_for("accountslanding"))
-        elif user.user_type == 5:
-            return redirect(url_for("lCgeneratorlanding"))            
+            if user.user_type == 0:
+                return redirect(url_for("studentlanding"))
+            elif user.user_type == 1:
+                return redirect(url_for("adminlanding"))
+            elif user.user_type == 2:
+                return redirect(url_for("hodlanding"))
+            elif user.user_type == 3:
+                return redirect(url_for("librarianlanding"))
+            elif user.user_type == 4:
+                return redirect(url_for("accountslanding"))
+            elif user.user_type == 5:
+                return redirect(url_for("lCgeneratorlanding"))
+        else:
+            return "Invalid credentials", 401
+        # if user.user_type == 0:
+        #     return redirect(url_for("studentlanding"))
+        # elif user.user_type == 1:
+        #     return redirect(url_for("adminlanding"))
+        # elif user.user_type == 2:
+        #     return redirect(url_for("hodlanding"))
+        # elif user.user_type == 3:
+        #     return redirect(url_for("librarianlanding"))
+        # elif user.user_type == 4:
+        #     return redirect(url_for("accountslanding"))
+        # elif user.user_type == 5:
+        #     return redirect(url_for("lCgeneratorlanding"))            
 
     return render_template("User/signIn.html")
 
 
+@app.route("/logout") # make a button for this and then leave it to this page ,it will logout the session
+def logout():
+    session.clear()
+    return redirect(url_for('signin'))
+
+
+@app.route("/error") 
+def err():
+    return render_template("User/error.html")
+
+
 @app.route("/studentPage",methods=['GET', 'POST'])
 def studentlanding():
-    return render_template("students/landingStud.html")
-
+    if session.get("user_email") and session.get("user_type") == 0:
+        
+        user_id = session.get("user_email")
+        application = Student.query.filter_by(user_id=user_id).first()
+        print( f"Welcome, {session['user_email']} (YOu are an: {session['user_type']})")
+        return render_template("students/landingStud.html",application=application)
+    else:
+        return redirect(url_for('err'))
+ 
 @app.route("/apply",methods=['GET', 'POST'])
 def studentapply():
-    if request.method == 'POST':
-        # print(request.form)
-        user_id = request.form['user_id']
-        GR_no = request.form['GR_no']
-        yearOfJoin = request.form['yearOfJoin']
-        # courseName = request.form['courseName']  
-        reasonOfLeaving = request.form['reasonOfLeaving']
-        PRN = request.form['PRN']
-        UPRN = request.form['UPRN']
-        semester = request.form['semester']
-        # declaration = request.form['declaration']
-        # isSubmitted= request.form["isSubmitted"]
+    
+    if session.get("user_email") and session.get("user_type") == 0:
         
-        # Get the checkbox value, default to '0' if unchecked
-        declaration = request.form.get('declaration', '0')
-        # Submit button is always clicked, so store '1'
-        isSubmitted = request.form.get('isSubmitted', '1')
+        print( f"Welcome, {session['user_email']} (YOu are an: {session['user_type']})")
+        user_id = session.get("user_email")
         
-        # application = Student(GR_no = GR_no , yearOfJoin = yearOfJoin , courseName = courseName , reasonOfLeaving = reasonOfLeaving , PRN=PRN , UPRN=UPRN , semester=semester , declaration=declaration , isSubmitted=isSubmitted)
-        application = Student.query.filter_by(user_id=user_id).first()
-        # db.session.add(application)
-        # db.session.commit()
-        # return redirect(url_for('studentlanding'))
-        if application:
-            # Update existing record
-            application.GR_no = GR_no
-            application.yearOfJoin = yearOfJoin
-            # application.courseName = courseName
-            application.reasonOfLeaving = reasonOfLeaving
-            application.PRN = PRN
-            application.UPRN = UPRN
-            application.semester = semester
-            application.declaration = declaration
-            application.isSubmitted = isSubmitted
-        else:
-            return "Student record not found!", 404  # If no record exists, return error
+        
+        if request.method == 'POST':
+            # print(request.form)
+            # user_id = request.form['user_id']
+            GR_no = request.form['GR_no']
+            yearOfJoin = request.form['yearOfJoin']
+            # courseName = request.form['courseName']  
+            reasonOfLeaving = request.form['reasonOfLeaving']
+            PRN = request.form['PRN']
+            UPRN = request.form['UPRN']
+            semester = request.form['semester']
+            # declaration = request.form['declaration']
+            # isSubmitted= request.form["isSubmitted"]
+            
+            # Get the checkbox value, default to '0' if unchecked
+            declaration = request.form.get('declaration', '0')
+            # Submit button is always clicked, so store '1'
+            isSubmitted = request.form.get('isSubmitted', '1')
+            
+            # application = Student(GR_no = GR_no , yearOfJoin = yearOfJoin , courseName = courseName , reasonOfLeaving = reasonOfLeaving , PRN=PRN , UPRN=UPRN , semester=semester , declaration=declaration , isSubmitted=isSubmitted)
+            application = Student.query.filter_by(user_id=user_id).first()
+            # db.session.add(application)
+            # db.session.commit()
+            # return redirect(url_for('studentlanding'))
+            if application:
+                # Update existing record
+                application.GR_no = GR_no
+                application.yearOfJoin = yearOfJoin
+                # application.courseName = courseName
+                application.reasonOfLeaving = reasonOfLeaving
+                application.PRN = PRN
+                application.UPRN = UPRN
+                application.semester = semester
+                application.declaration = declaration
+                application.isSubmitted = isSubmitted
+            else:
+                return "Student record not found!", 404  # If no record exists, return error
 
-        db.session.commit()  # Save changes to DB
-        return redirect(url_for('studentlanding'))
-    return render_template("students/applicationForm.html")
+            db.session.commit()  # Save changes to DB
+            return redirect(url_for('studentlanding'))
+        return render_template("students/applicationForm.html")
+    else:
+        return redirect(url_for('err'))
 
 
 
 @app.route("/adminsPage")
 def adminlanding():
-    return render_template("admin/landingAdmin.html")
+    if session.get("user_email") and session.get("user_type") == 1:
+        print( f"Welcome, {session['user_email']} (You are an: {session['user_type']})")
+        return render_template("admin/landingAdmin.html")
+    else:
+        return redirect(url_for('err'))
+
 
 
 
 @app.route("/hodPage",methods=['GET', 'POST'])
 def hodlanding():
-    studentDetails = Student.query.all()
-    # print(studentDetails)
-      
-    return render_template("HODs/landingHod.html", studentDetails=studentDetails)
+    if session.get("user_email") and session.get("user_type") == 2:
+        
+        print( f"Welcome, {session['user_email']} (You are an: {session['user_type']})")
+        studentDetails = Student.query.filter_by(isSubmitted=1).all()
+        
+        return render_template("HODs/landingHod.html", studentDetails=studentDetails)
+    else:
+        return redirect(url_for('err'))
 
 @app.route("/HODacceptedForms")
-def HODacceptedForm():
-    studentDetails = Student.query.filter_by(hod_approval_status=1).all()
-    return render_template("HODs/HODacceptedForms.html",studentDetails=studentDetails)
+def HODacceptedForm(): 
+    
+    if session.get("user_email") and session.get("user_type") == 2:
+        
+        print( f"Welcome, {session['user_email']} (You are an: {session['user_type']})")
+        studentDetails = Student.query.filter_by(hod_approval_status=1).all()
+        
+        return render_template("HODs/HODacceptedForms.html",studentDetails=studentDetails)
+    else:
+        return redirect(url_for('err'))
 
 @app.route("/HODrejectedForms")
 def HODrejectedForm():
-    studentDetails = Student.query.filter_by(hod_approval_status=2).all()
-    return render_template("HODs/HODrejectedForms.html",studentDetails=studentDetails)
+    if session.get("user_email") and session.get("user_type") == 2:
+        
+        print( f"Welcome, {session['user_email']} (You are an: {session['user_type']})")
+        studentDetails = Student.query.filter_by(hod_approval_status=2).all()
+        
+        return render_template("HODs/HODrejectedForms.html",studentDetails=studentDetails)
+    else:
+        return redirect(url_for('err'))
 
 
 
 @app.route("/librarianPage",methods=['GET', 'POST'])
 def librarianlanding():
-    studentDetails = Student.query.all()
-    print("librarian",studentDetails)
-    return render_template("librarian/landingLibrary.html",studentDetails=studentDetails)
+    if session.get("user_email") and session.get("user_type") == 3:
+        
+        print( f"Welcome, {session['user_email']} (You are an: {session['user_type']})")
+        studentDetails = Student.query.filter_by(isSubmitted=1).all()
+        
+        return render_template("librarian/landingLibrary.html",studentDetails=studentDetails)
+    else:
+        return redirect(url_for('err'))
 
 @app.route("/librarianAcceptedForms")
 def librarianAcceptedForm():
-    studentDetails = Student.query.filter_by(lib_approval_status=1).all()
-    return render_template("librarian/librarianAcceptedForms.html",studentDetails=studentDetails)
+    if session.get("user_email") and session.get("user_type") == 3:
+        
+        studentDetails = Student.query.filter_by(lib_approval_status=1).all()
+        print( f"Welcome, {session['user_email']} (YOu are an: {session['user_type']})")
+        
+        return render_template("librarian/librarianAcceptedForms.html",studentDetails=studentDetails)
+    else:
+        return redirect(url_for('err'))
 
 @app.route("/librarianRejectedForms")
 def librarianRejectedForm():
-    studentDetails = Student.query.filter_by(lib_approval_status=2).all()
-    return render_template("librarian/librarianRejectedForms.html",studentDetails=studentDetails)
+    
+    if session.get("user_email") and session.get("user_type") == 3:
+        
+        studentDetails = Student.query.filter_by(lib_approval_status=2).all()
+        print( f"Welcome, {session['user_email']} (YOu are an: {session['user_type']})")
+        
+        return render_template("librarian/librarianRejectedForms.html",studentDetails=studentDetails)
+    else:
+        return redirect(url_for('err'))
 
 
 
 
 @app.route("/accountsPage",methods=['GET', 'POST'])
 def accountslanding():
-    studentDetails = Student.query.all()
-    print("accounts",studentDetails)
-    return render_template("Accounts/landingAccounts.html",studentDetails=studentDetails)
+    
+    if session.get("user_email") and session.get("user_type") == 4:
+        
+        studentDetails = Student.query.filter_by(isSubmitted=1).all()
+        print( f"Welcome, {session['user_email']} (YOu are an: {session['user_type']})")
+        
+        return render_template("Accounts/landingAccounts.html",studentDetails=studentDetails)
+    else:
+        return redirect(url_for('err'))
 
 @app.route("/AccountsRejectedForms")
 def AccountsRejectedForm():
-    studentDetails = Student.query.filter_by(acc_approval_status=2).all()
-    return render_template("Accounts/AccRejectedForms.html",studentDetails=studentDetails)
+    
+    if session.get("user_email") and session.get("user_type") == 4:
+        
+        print( f"Welcome, {session['user_email']} (YOu are an: {session['user_type']})")
+        studentDetails = Student.query.filter_by(acc_approval_status=2).all()
+                
+        return render_template("Accounts/AccRejectedForms.html",studentDetails=studentDetails)
+    else:
+        return redirect(url_for('err'))
 
 @app.route("/AccountsAcceptedForms")
 def AccountsAcceptedForm():
-    studentDetails = Student.query.filter_by(acc_approval_status=1).all()
-    return render_template("Accounts/AccAcceptedForms.html",studentDetails=studentDetails)
+    if session.get("user_email") and session.get("user_type") == 4:
+        
+        print( f"Welcome, {session['user_email']} (YOu are an: {session['user_type']})")
+        studentDetails = Student.query.filter_by(acc_approval_status=1).all()
+        
+        return render_template("Accounts/AccAcceptedForms.html",studentDetails=studentDetails)
+    else:
+        return redirect(url_for('err'))
 
 @app.route("/LCgeneratorPage")
 def lCgeneratorlanding():
-    studentDetails = Student.query.filter_by(
+    if session.get("user_email") and session.get("user_type") == 5:
+        
+        print( f"Welcome, {session['user_email']} (YOu are an: {session['user_type']})")
+        studentDetails = Student.query.filter_by(
         acc_approval_status=1,
         lib_approval_status=1,
-        hod_approval_status=1
-    ).all()  # Fetch students with all approvals
-    print(studentDetails)
-    return render_template("LC_generator/landingLcGenerator.html",studentDetails=studentDetails)
+        hod_approval_status=1).all()  # Fetch students with all approvals
+        
+        return render_template("LC_generator/landingLcGenerator.html",studentDetails=studentDetails)
+    else:
+        return redirect(url_for('err'))
+    
 
 
 # -----------------------------------------------Routes---------------------------------------------------------------------
@@ -327,6 +439,7 @@ def updateApprovaloflib():
     student_id = data.get('student_id')
 
     stud = Student.query.filter_by(sr_no=student_id).first()
+    
     if stud:
         stud.lib_approval_status = 1  
         
@@ -350,7 +463,7 @@ def updateRejectionOflib():
     if stud:
         stud.lib_rejection_reason = lib_rejection_reason 
         stud.lib_remarks = lib_remarks  
-        stud.lib_approval_status = 2  # Directly setting 1
+        stud.lib_approval_status = 2  # Directly setting 152222222222228                                                                                                                                                                                                                                                                                                                                                                                                 
         
         print(stud.lib_approval_status)
         print(stud.lib_remarks)
@@ -411,6 +524,44 @@ def updateRejectionOfacc():
     else:
         print("Student not found!")
         return ({"message": "Student not found"}), 404
+    
+    
+# email send by lcGenerator after overall process
+@app.route('/send_email', methods=['POST'])
+def send_email():
+    data = request.get_json()
+    recipient_email = data.get('email')
+
+    subject = "Document Ready for Collection"
+    body = f"Dear student,\n\nYour document is ready. Please collect it from the office.\n\nRegards,\nAdministration"
+
+    sender_email = "arshkhn2000@gmail.com"
+    sender_password = "gwld homk xmdy vdcb"
+    
+
+        
+    # SMTP setup (example for Gmail)
+    try:
+        msg = MIMEText(body)
+        msg['Subject'] = subject
+        msg['From'] = sender_email
+        msg['To'] = recipient_email
+
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, [recipient_email], msg.as_string())
+        server.quit()
+        
+        student = Student.query.filter_by(user_id=recipient_email).first()
+        print(student)
+        if student:
+            student.LCgenerated = 1
+            db.session.commit()
+
+        return jsonify({'message': 'Email sent successfully.'})
+    except Exception as e:
+        print('Error sending email:', e)
+        return jsonify({'message': 'Error sending email.'}), 500
 
 
 

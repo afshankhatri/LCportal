@@ -10,13 +10,11 @@ in accounts and in library the view details is not working properly
 
 UPDATES:
 
- now we need to work on ... giving final dates to the students ,for collecting the LC 
-
-
 also if the formis rejected then the interface for the student to make the necessary changes 
 
-also display of remark given at the time of rejectioin should be displayed to the student so that he can make the necessary changes and resubmit the form
 
-//IMPORTANT UPDATE
-accepted rejected button not working properly in viewDetsils popup ... because the scene is that when we accept or reject the user the code does not acc/rej the particular selected student ... it updates the 1st person in the list instead of the selected person  ... if we acc/rej directly from outside it work properly
-basically the issue is with the rejection model in the view-details section  ... outside it is working properly
+//IMPORTANT UPDATEs
+
+make the re-apply button working (it is just added on the interface ,not functional)
+
+the hod's should only be able to see the studnets of therir own branch

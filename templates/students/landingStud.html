@@ -1,11 +1,89 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LC collect</title>
+    <style>
+        .card {
+        border: 1px solid #ccc;
+        padding: 16px;
+        width: 300px;
+        margin: 50px auto;
+        text-align: center;
+        }
+        .btn {
+        padding: 8px 12px;
+        border: 1px solid #333;
+        background: #eee;
+        cursor: pointer;
+        text-decoration: none;
+        color: #000;
+        display: inline-block;
+        }
+    </style>
 </head>
 <body>
-    <h2>Landing Page Of Students</h2>
-    <a id="apply" href="/apply">apply</a>
+    <h2>Landing Page Of {{ application.user_id }}</h2>
+    <!-- <a id="apply" href="/apply">apply</a> -->
+
+
+    <div class="card">
+        {% if application.isSubmitted == 0 %}
+        <p>You have not submitted the form.</p>
+        <a href="/apply" class="btn">Apply</a>
+        {% elif application.isSubmitted == 1 and (application.acc_approval_status == 2 or application.lib_approval_status == 2 or application.hod_approval_status == 2)%}
+        <p>Rejected</p>
+        {% elif application.isSubmitted == 1 and (application.acc_approval_status != 1 or application.lib_approval_status != 1 or application.hod_approval_status != 1) %}
+        <p>Under Scrutiny...</p>
+        {% elif application.isSubmitted == 1 and (application.acc_approval_status == 1 and application.lib_approval_status == 1 and application.hod_approval_status == 1)  %}
+        <p>Processing...</p>
+        {% elif application.LCgenerated ==1 %}
+        <p>Document Ready: Your document is ready. Please collect it from the office.</p>
+        {% else %}
+        <p>Status Unknown</p>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        {% if application.isSubmitted == 1 and (application.acc_approval_status == 2)%}
+        <h1> Rejected by Acccounts Dept </h1>
+        <strong>Remark:</strong><p> {{ application.acc_remarks }} </p>
+        <strong>Reason:</strong><p> {{ application.acc_rejection_reason }} </p>
+        <button>Re-Apply</button>
+        
+        {% endif %}
+    </div>
+    <div class="card">
+        {% if application.isSubmitted == 1 and (application.lib_approval_status == 2)%}
+        <h1> Rejected by Library Dept </h1>
+        <strong>Remark:</strong><p> {{ application.lib_remarks }} </p>
+        <strong>Reason:</strong><p> {{ application.lib_rejection_reason }} </p>
+        <button>Re-Apply</button>
+
+        {% endif %}
+    </div>
+    <div class="card">
+        {% if application.isSubmitted == 1 and (application.hod_approval_status == 2)%}
+        <h1> Rejected by HOD </h1>
+        <strong>Remark:</strong><p> {{ application.hod_remarks }} </p>
+        <strong>Reason:</strong><p> {{ application.hod_rejection_reason }} </p>
+        <button>Re-Apply</button>
+
+        {% endif %}
+    </div>
+        
+    
+
+
+
+    <!-- make reapply button make make it work -->
+     <!-- show the lc pdf once generated -->
+
+
+
+
+
+
 </body>
-</html>
+</html> 
