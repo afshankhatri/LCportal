@@ -15,6 +15,6 @@ also if the formis rejected then the interface for the student to make the neces
 
 //IMPORTANT UPDATEs
 
-make the re-apply button working (it is just added on the interface ,not functional)
+make the re-apply button working (it is just added on the interface ,not functional)...
+for re-apply ask the teacher what the students needs to do if rejected for each particular authority ... if rejected by hod then what similarly for acc and lib
 
-the hod's should only be able to see the studnets of therir own branch

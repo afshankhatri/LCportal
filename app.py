@@ -1,5 +1,6 @@
 from flask import Flask,render_template,request,flash,redirect,url_for,session,jsonify;
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import and_
 from datetime import datetime
 import pymysql
 from werkzeug.security import check_password_hash
@@ -123,6 +124,7 @@ def signin():
             # session["user_id"] = user.id          # or user.sr_no / primary key
             session["user_email"] = user.email
             session["user_type"] = user.user_type
+            session["user_dept"] = user.dept
 
             # Redirect based on user_type
             if user.user_type == 0:
@@ -246,9 +248,15 @@ def adminlanding():
 def hodlanding():
     if session.get("user_email") and session.get("user_type") == 2:
         
-        print( f"Welcome, {session['user_email']} (You are an: {session['user_type']})")
-        studentDetails = Student.query.filter_by(isSubmitted=1).all()
-        
+        print( f"Welcome, {session['user_email']} (You are an: {session['user_type']} . of dept {session["user_dept"]})")
+
+        # with the filter given below the hod will now be able to see the studets of only his branch ... hod table me koi bhi student ka masla hua to sidha ye wale code ko aa k check kar na 
+        studentDetails = Student.query.filter(
+            and_(
+                Student.isSubmitted == 1,
+                Student.courseName == session["user_dept"]
+            )
+        ).all()        
         return render_template("HODs/landingHod.html", studentDetails=studentDetails)
     else:
         return redirect(url_for('err'))
@@ -546,7 +554,7 @@ def send_email():
         msg['Subject'] = subject
         msg['From'] = sender_email
         msg['To'] = recipient_email
-
+ 
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         server.login(sender_email, sender_password)
         server.sendmail(sender_email, [recipient_email], msg.as_string())
