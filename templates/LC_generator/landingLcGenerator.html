@@ -16,7 +16,26 @@
             <div class="card-body">
                 <!-- <h4><strong>{{stud.name}}</strong></h4> -->
                 <p><strong>G_R_No:</strong> {{stud.GR_no}}</p>
-                <p><strong>Branch:</strong> {{stud.courseName}}</p>
+
+                <p><strong>Branch:</strong> 
+                    {% if stud.courseName == 0 %}
+                        AIML
+                    {% elif stud.courseName == 1 %}
+                        IOT
+                    {% elif stud.courseName == 2 %}
+                        Computer Science
+                    {% elif stud.courseName == 3 %}
+                        IT
+                    {% elif stud.courseName == 4 %}
+                        EXTC
+                    {% elif stud.courseName == 5 %}
+                        Mech
+                    {% elif stud.courseName == 6 %}
+                        Civil
+                    {% else %}
+                        Unknown
+                    {% endif %}
+                </p>
 
                 <button class="btn btn-secondary" onclick="openModal('{{ stud.courseName }}', '{{ stud.user_id }}', '{{ stud.courseName }}', '{{stud.GR_no}}' ,'{{ stud.sr_no }}','{{ stud.LCgenerated }}') ">View Details</button>
 

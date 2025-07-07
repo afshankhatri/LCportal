@@ -23,7 +23,26 @@
                 <!-- <p><strong>Name:</strong> {{stud.name}}</p>  -->
                           <!-- NOTE :  name is not appearing ... since it is not getting imported from user table to students tabel ... put a query in such a way that it store the name in the students table as well -->
                 <p><strong>G_R_No:</strong> {{stud.GR_no}}</p>
-                <p><strong>Branch:</strong> {{stud.courseName}}</p>
+                <!-- <p><strong>Branch:</strong> {{stud.courseName}}</p> -->
+                <p><strong>Branch:</strong> 
+                    {% if stud.courseName == 0 %}
+                        AIML
+                    {% elif stud.courseName == 1 %}
+                        IOT
+                    {% elif stud.courseName == 2 %}
+                        Computer Science
+                    {% elif stud.courseName == 3 %}
+                        IT
+                    {% elif stud.courseName == 4 %}
+                        EXTC
+                    {% elif stud.courseName == 5 %}
+                        Mech
+                    {% elif stud.courseName == 6 %}
+                        Civil
+                    {% else %}
+                        Unknown
+                    {% endif %}
+                </p>
                 {% if stud.hod_approval_status == 1 %}
                     <button disabled>Approved</button>
                 {% else %}
