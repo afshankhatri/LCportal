@@ -18,7 +18,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
-# ------------------------------- TABLE CLASS DECLARATION -------------------------------
+# ------------------------------ TABLE CLASS DECLARATION ------------------------------
  
 
 # general user
