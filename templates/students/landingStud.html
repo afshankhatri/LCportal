@@ -29,7 +29,7 @@
 
 
     <div class="card">
-        {% if application.isSubmitted == 0 %}
+        {% if application.isSubmitted == 0  %}
         <p>You have not submitted the form.</p>
         <a href="/apply" class="btn">Apply</a>
         {% elif application.isSubmitted == 1 and (application.acc_approval_status == 2 or application.lib_approval_status == 2 or application.hod_approval_status == 2)%}

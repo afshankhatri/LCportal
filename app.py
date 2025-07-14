@@ -40,6 +40,7 @@ class Student(db.Model):
 
     sr_no = db.Column(db.Integer, primary_key=True, autoincrement=True)  # Auto-increment primary key
     user_id = db.Column(db.String(120), db.ForeignKey('user.email', ondelete='CASCADE'), nullable=False)  # Foreign key linking to User(email)
+    name = db.Column(db.String(250), nullable=False)
     GR_no = db.Column(db.String(100), nullable=True)  # Nullable unique identifier
     yearOfJoin = db.Column(db.Integer, nullable=True)  # YEAR type stored as an Integer
     courseName = db.Column(db.Integer, nullable=True)
@@ -83,14 +84,67 @@ class HOD(db.Model):
     rejection_reason = db.Column(db.String(255), nullable=True)  # Reason for rejection (if any)
     approval_status = db.Column(db.Integer, nullable=True, default=0)  # Status of approval
     last_verification_date = db.Column(db.Date, nullable=True)  # Last verification date
+    studentCount = db.Column(db.Integer, default=0)
     # date_of_joining = db.Column(db.DateTime, nullable=True)  # Date of joining
     # contact_number = db.Column(db.String(15), nullable=True)  # Contact number
     # designation = db.Column(db.String(255), nullable=True)  # HOD Designation
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())  # Last updated timestamp
+    
 
     def __repr__(self):
         return f"{ self.id_hod , self.name , self.emp_id , self.dept , self.remarks , self.misconduct_flag , self.achievements_flag , self.rejection_reason , self.approval_status , self.last_verification_date  }"
     
+class Accounts(db.Model):
+    __tablename__ = 'accounts'  # You can change this if your actual table name differs
+
+    id_acc = db.Column(db.String(120), primary_key=True, nullable=False)
+    emp_id = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(250), nullable=False)
+    # remarks = db.Column(db.Text)
+    # rejection_reason = db.Column(db.String(255))
+    # approval_status = db.Column(db.Integer)
+    last_verification_date = db.Column(db.DateTime)
+    # fees_paid = db.Column(db.Numeric(10, 2))
+    # pending_fees = db.Column(db.Numeric(10, 2))
+    # fine_amount = db.Column(db.Numeric(10, 2))
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"{self.id_acc, self.emp_id, self.last_verification_date, self.updated_at}"
+
+class Library(db.Model):
+    __tablename__ = 'librarian'  # Change if your actual table name is different
+
+    sr_no = db.Column(db.Integer, primary_key=True, nullable=False)
+    id_lib = db.Column(db.String(120), nullable=True, index=True)  # MUL = Multiple Index
+    emp_id = db.Column(db.String(100), nullable=True, unique=True)  # UNI = Unique
+    name = db.Column(db.String(250), nullable=False)
+    # remarks = db.Column(db.Text, nullable=True)
+    # rejection_reason = db.Column(db.String(255), nullable=True)
+    # approval_status = db.Column(db.Integer, nullable=True)
+    # last_verification_date = db.Column(db.DateTime, nullable=True)
+    # library_fine_amount = db.Column(db.Numeric(10, 2), nullable=True)
+    # book_return_status = db.Column(db.Integer, nullable=True)
+    # fine_payment_status = db.Column(db.Integer, nullable=True)
+    updated_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"{self.id_lib,self.emp_id,self.updated_at}"    
+    
+class LC_Generator(db.Model):
+    __tablename__ = 'lc_generator'
+
+    sr_no = db.Column(db.Integer, primary_key=True, nullable=False)
+    name = db.Column(db.String(250), nullable=False)
+    lc_id = db.Column(db.String(120), nullable=True, index=True)      # MUL = Multiple Index
+    isGenerated = db.Column(db.Integer, default=0)
+    generated_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"{self.lc_id, self.name, self.generated_at}"
+    
+
+
 # ------------------------------- FUNCTION DEFINATIONS -------------------------------
 
 @app.route("/registration", methods = ['GET','POST'])
@@ -241,6 +295,68 @@ def adminlanding():
     else:
         return redirect(url_for('err'))
 
+@app.route("/adminsPage/Students")
+def adminStudentDisplay():
+    if session.get("user_email") and session.get("user_type") == 1:
+        print( f"Welcome, {session['user_email']} (You are an: {session['user_type']})")
+        
+        studentDetails = Student.query.all()
+        print(studentDetails)
+
+        return render_template("admin/StudentTable.html",studentDetails = studentDetails)
+    else:
+        return redirect(url_for('err'))
+    
+@app.route("/adminsPage/HOD")
+def adminHODdisplay():
+    if session.get("user_email") and session.get("user_type") == 1:
+        print( f"Welcome, {session['user_email']} (You are an: {session['user_type']})")
+        
+        HODdetails = HOD.query.all()
+        print(HODdetails)
+
+        return render_template("admin/HODTable.html",HODdetails = HODdetails)
+    else:
+        return redirect(url_for('err'))  
+
+@app.route("/adminsPage/Accounts")
+def adminACCdisplay():
+    if session.get("user_email") and session.get("user_type") == 1:
+        print( f"Welcome, {session['user_email']} (You are an: {session['user_type']})")
+        
+        AccDetails = Accounts.query.all()
+        print(AccDetails)
+
+        return render_template("admin/ACCtable.html",AccDetails = AccDetails)
+    else:
+        return redirect(url_for('err'))      
+
+@app.route("/adminsPage/Library")
+def adminLIBdisplay():
+    if session.get("user_email") and session.get("user_type") == 1:
+        print( f"Welcome, {session['user_email']} (You are an: {session['user_type']})")
+        
+        LibDetails = Library.query.all()
+        print(LibDetails)
+        
+        return render_template("admin/LIBtable.html",LibDetails = LibDetails)
+    else:
+        return redirect(url_for('err'))  
+    
+@app.route("/adminsPage/LC_generator")
+def adminLCgenDisplay():
+    if session.get("user_email") and session.get("user_type") == 1:
+        print( f"Welcome, {session['user_email']} (You are an: {session['user_type']})")
+        
+        LCgenDetails = LC_Generator.query.all()
+        print(LCgenDetails)
+        
+        return render_template("admin/LC_genTable.html",LCgenDetails = LCgenDetails)
+    else:
+        return redirect(url_for('err'))  
+
+
+
 
 
 
@@ -267,7 +383,14 @@ def HODacceptedForm():
     if session.get("user_email") and session.get("user_type") == 2:
         
         print( f"Welcome, {session['user_email']} (You are an: {session['user_type']})")
-        studentDetails = Student.query.filter_by(hod_approval_status=1).all()
+        # studentDetails = Student.query.filter_by(hod_approval_status=1).all()
+        studentDetails = Student.query.filter(
+            and_(
+                Student.isSubmitted == 1,
+                Student.courseName == session["user_dept"],
+                Student.hod_approval_status == 1  
+            )
+        ).all() 
         
         return render_template("HODs/HODacceptedForms.html",studentDetails=studentDetails)
     else:
@@ -278,7 +401,14 @@ def HODrejectedForm():
     if session.get("user_email") and session.get("user_type") == 2:
         
         print( f"Welcome, {session['user_email']} (You are an: {session['user_type']})")
-        studentDetails = Student.query.filter_by(hod_approval_status=2).all()
+        # studentDetails = Student.query.filter_by(hod_approval_status=2).all()
+        studentDetails = Student.query.filter(
+            and_(
+                Student.isSubmitted == 1,
+                Student.courseName == session["user_dept"],
+                Student.hod_approval_status == 2 
+            )
+        ).all() 
         
         return render_template("HODs/HODrejectedForms.html",studentDetails=studentDetails)
     else:

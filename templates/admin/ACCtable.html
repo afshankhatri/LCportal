@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #444;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Account's</h1>
+    <table>
+        <thead>
+            <tr>
+                <!-- <th>Sr. No</th> -->
+                <th>Name</th>
+                <th>ID</th>
+                <th>Last verified</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for acc in AccDetails %}
+            <tr>
+                <td>{{ acc.name }}</td>
+                <td>{{ acc.id_acc }}</td>
+                <td>{{ acc.updated_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

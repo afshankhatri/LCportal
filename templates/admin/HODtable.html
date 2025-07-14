@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #444;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>HOD's </h1>
+    <table>
+        <thead>
+            <tr>
+                <!-- <th>Sr. No</th> -->
+                <th>Name</th>
+                <th>ID</th>
+                <th>Department</th>
+                <th>Total Studnets</th>
+                <th>Last Verified</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for hod in HODdetails %}
+            <tr>
+                <!-- <td>{{ hod.sr_no }}</td> --> <!-- ye display nai hoga Q k me ne is ko flask k class wali query me define hi nai kia hu-->
+                <td>{{ hod.name }}</td>
+                <td>{{ hod.id_hod }}</td>
+                <!-- <td>{{ hod.dept }}</td> -->
+                    {% if hod.dept == "0" %}
+                        <td>AIML</td>
+                    {% elif hod.dept == "1" %}
+                        <td>IOT</td>
+                    {% elif hod.dept == "2" %}
+                        <td>Computer Science</td>
+                    {% elif hod.dept == "3" %}
+                        <td>IT</td>
+                    {% elif hod.dept == "4" %}
+                        <td> EXTC </td>
+                    {% elif hod.dept == "5" %}
+                        <td> Mech </td>
+                    {% elif hod.dept == "6" %}
+                        <td> Civil </td>
+                    {% else %}
+                        <td>Unknown</td>
+                    {% endif %}
+                <td>{{hod.studentCount}}</td>
+                <td>{{ hod.updated_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

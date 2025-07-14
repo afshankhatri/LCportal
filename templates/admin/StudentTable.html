@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #444;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Student's</h1>
+    <table>
+        <thead>
+            <tr>
+                <!-- <th>Sr. No</th> -->
+                <th>Name</th>
+                <th>ID</th>
+                <th>Department</th>
+                <th>GR No.</th>
+                <th>Approval From HOD</th>
+                <th>Approval From Accounts</th>
+                <th>Approval From Lib</th>
+                <th>LC generated</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stud in studentDetails %}
+            <tr>
+                <!-- <td>{{ stud.sr_no }}</td> --> <!-- ye display nai hoga Q k me ne is ko flask k class wali query me define hi nai kia hu-->
+                <td>{{ stud.name }}</td>
+                <td>{{ stud.user_id }}</td>
+                <!-- <td>{{ stud.courseName }}</td> -->
+                    {% if stud.courseName == 0 %}
+                        <td>AIML</td>
+                    {% elif stud.courseName == 1 %}
+                        <td>IOT</td>
+                    {% elif stud.courseName == 2 %}
+                        <td>Computer Science</td>
+                    {% elif stud.courseName == 3 %}
+                        <td>IT</td>
+                    {% elif stud.courseName == 4 %}
+                        <td> EXTC </td>
+                    {% elif stud.courseName == 5 %}
+                        <td> Mech </td>
+                    {% elif stud.courseName == 6 %}
+                        <td> Civil </td>
+                    {% else %}
+                        <td>Unknown</td>
+                    {% endif %}
+
+                <td>{{stud.GR_no}}</td>
+
+                <!-- hod approval -->
+                {% if stud.hod_approval_status == 0 %}
+                    <td> - </td>
+                {% elif stud.hod_approval_status == 1 %}
+                    <td> Approved </td>
+                {% else %}
+                    <td>{{ stud.hod_remarks }}</td>
+                {% endif %}
+
+                <!-- accounts approval -->
+                {% if stud.acc_approval_status == 0 %}
+                    <td> - </td>
+                {% elif stud.acc_approval_status == 1 %}
+                    <td> Approved </td>
+                {% else %}
+                    <td>{{ stud.acc_remarks }}</td>
+                {% endif %}
+
+                <!-- Lib approval -->
+                {% if stud.lib_approval_status == 0 %}
+                    <td> - </td>
+                {% elif stud.lib_approval_status == 1 %}
+                    <td> Approved </td>
+                {% else %}
+                    <td>{{ stud.lib_remarks }}</td>
+                {% endif %}
+
+                <!-- is LC generated  -->
+                {% if stud.LCgenerated == 0 %}
+                    <td> No </td>
+                {% else  %}
+                    <td> Yes </td>
+                {% endif %}
+            
+
+
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
