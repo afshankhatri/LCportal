@@ -4,51 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LC collect</title>
+    <link rel="stylesheet" href="/static/css/student/applicationForm.css">
 </head>
 <body>
-    <h2>Student Application Form</h2>
-    
-    <form id="studentForm" action="/apply" method="POST">
-
-
-        <label for="GR_no">GR Number:</label>
-        <input type="text" id="GR_no" name="GR_no" required>
-
-        <label for="yearOfJoin">Year of Joining:</label>
-        <input type="number" id="yearOfJoin" name="yearOfJoin" min="1984" max="2099" required>
-
- 
-        <label for="reasonOfLeaving">Reason for Leaving:</label>
-        <textarea id="reasonOfLeaving" name="reasonOfLeaving"></textarea>
- 
-        <label for="PRN">PRN:</label>
-        <input type="text" id="PRN" name="PRN" required>
-
-        <label for="UPRN">UPRN:</label>
-        <input type="text" id="UPRN" name="UPRN" required>
-
-        <label for="semester">Semester:</label>
-        <input type="number" id="semester" name="semester" min="1" max="8" required>
-
-        <!-- <div class="checkbox-container">
-            <input type="checkbox" id="declarationCheck" name="declarationCheck">
-            <label for="declarationCheck">
-                I confirm that the information provided is correct. Any inconsistency may cause delays.
-            </label>
+    <div class="bg-decoration"></div>
+    <div class="bg-shapes"></div>
+    <div class="bg-shapes2"></div>
+    <a href="/logout" class="logout-btn">Logout</a>
+    <div class="container">
+        <div class="header">
+            <h1>Leaving Certificate Application</h1>
+            <p>Please fill out the form below to apply for your leaving certificate.</p>
         </div>
+        <div class="form-section">
+            <div class="form-card">
+                <form id="studentForm" action="/apply" method="POST">
+                    <label for="GR_no">GR Number:</label>
+                    <input type="text" id="GR_no" name="GR_no" required>
 
-        <button type="submit" id="submitButton" value ="1"  >Apply</button> -->
-        <div class="checkbox-container">
-            <input type="checkbox" id="declarationCheck" name="declaration" value="1">
-            <label for="declarationCheck">
-                I confirm that the information provided is correct. Any inconsistency may cause delays.
-            </label>
+                    <label for="yearOfJoin">Year of Joining:</label>
+                    <input type="number" id="yearOfJoin" name="yearOfJoin" min="1984" max="2099" required>
+
+                    <label for="reasonOfLeaving">Reason for Leaving:</label>
+                    <textarea id="reasonOfLeaving" name="reasonOfLeaving"></textarea>
+
+                    <label for="PRN">PRN:</label>
+                    <input type="text" id="PRN" name="PRN" required>
+
+                    <label for="UPRN">UPRN:</label>
+                    <input type="text" id="UPRN" name="UPRN" required>
+
+                    <label for="semester">Semester:</label>
+                    <input type="number" id="semester" name="semester" min="1" max="8" required>
+
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="declarationCheck" name="declaration" value="1">
+                        <label for="declarationCheck">
+                            I confirm that the information provided is correct. Any inconsistency may cause delays.
+                        </label>
+                    </div>
+
+                    <input type="hidden" name="isSubmitted" value="1">
+
+                    <button type="submit" id="submitButton">Apply</button>
+                </form>
+            </div>
         </div>
-    
-        <input type="hidden" name="isSubmitted" value="1"> <!-- Always sending 1 when form is submitted -->
-    
-        <button type="submit" id="submitButton">Apply</button>
-
-    </form>
+    </div>
 </body>
 </html>

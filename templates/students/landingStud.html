@@ -3,88 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LC collect</title>
-    <style>
-        .card {
-        border: 1px solid #ccc;
-        padding: 16px;
-        width: 300px;
-        margin: 50px auto;
-        text-align: center;
-        }
-        .btn {
-        padding: 8px 12px;
-        border: 1px solid #333;
-        background: #eee;
-        cursor: pointer;
-        text-decoration: none;
-        color: #000;
-        display: inline-block;
-        }
-    </style>
+    <title>Student Dashboard - LC System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/student/landingStud.css">
+    
 </head>
 <body>
-    <h2>Landing Page Of {{ application.user_id }}</h2>
-<!--     <a id="apply" href="/apply">apply</a> --> 
-<!--     apply button is an issue when the submit==0 it is not showing the option of apply ... correct the issue and make it proper -->
-
-
-    <div class="card">
-        {% if application.isSubmitted == 0  %}
-        <p>You have not submitted the form.</p>
-        <a href="/apply" class="btn">Apply</a>
-        {% elif application.isSubmitted == 1 and (application.acc_approval_status == 2 or application.lib_approval_status == 2 or application.hod_approval_status == 2)%}
-        <p>Rejected</p>
-        {% elif application.isSubmitted == 1 and (application.acc_approval_status != 1 or application.lib_approval_status != 1 or application.hod_approval_status != 1) %}
-        <p>Under Scrutiny...</p>
-        {% elif application.isSubmitted == 1 and (application.acc_approval_status == 1 and application.lib_approval_status == 1 and application.hod_approval_status == 1)  %}
-        <p>Processing...</p>
-        {% elif application.LCgenerated ==1 %}
-        <p>Document Ready: Your document is ready. Please collect it from the office.</p>
-        {% else %}
-        <p>Status Unknown</p>
-        {% endif %}
-    </div>
-
-    <div class="card">
-        {% if application.isSubmitted == 1 and (application.acc_approval_status == 2)%}
-        <h1> Rejected by Acccounts Dept </h1>
-        <strong>Remark:</strong><p> {{ application.acc_remarks }} </p>
-        <strong>Reason:</strong><p> {{ application.acc_rejection_reason }} </p>
-        <button>Re-Apply</button>
-        
-        {% endif %}
-    </div>
-    <div class="card">
-        {% if application.isSubmitted == 1 and (application.lib_approval_status == 2)%}
-        <h1> Rejected by Library Dept </h1>
-        <strong>Remark:</strong><p> {{ application.lib_remarks }} </p>
-        <strong>Reason:</strong><p> {{ application.lib_rejection_reason }} </p>
-        <button>Re-Apply</button>
-
-        {% endif %}
-    </div>
-    <div class="card">
-        {% if application.isSubmitted == 1 and (application.hod_approval_status == 2)%}
-        <h1> Rejected by HOD </h1>
-        <strong>Remark:</strong><p> {{ application.hod_remarks }} </p>
-        <strong>Reason:</strong><p> {{ application.hod_rejection_reason }} </p>
-        <button>Re-Apply</button>
-
-        {% endif %}
-    </div>
-        
+    <div class="bg-decoration"></div>
+    <div class="bg-shapes"></div>
+    <div class="bg-shapes2"></div>
     
+    <a href="/logout" class="logout-btn">Logout</a>
 
+    <div class="container">
+        <div class="header">
+            <h1>Student Dashboard</h1>
+            <p>Welcome back, {{ application.user_id }}</p>
+        </div>
 
+        <div class="status-section">
+            <div class="status-card">
+                <h3>Application Status</h3>
+                {% if application.isSubmitted == 0 or not application.isSubmitted %}
+                    <div class="status-icon icon-pending"><i class="fas fa-file-alt"></i></div>
+                    <div class="status-text">You have not submitted your leaving certificate application yet.</div>
+                    <a id="apply" href="/apply" class="btn">Apply for Leaving Certificate</a>
+                {% elif application.isSubmitted == 1 and (application.acc_approval_status == 2 or application.lib_approval_status == 2 or application.hod_approval_status == 2) %}
+                    <div class="status-icon icon-rejected"><i class="fas fa-times-circle"></i></div>
+                    <div class="status-text">Your application has been rejected. Please check the rejection details below and reapply.</div>
+                    <a href="/apply" class="btn">Re-Apply</a>
+                {% elif application.isSubmitted == 1 and (application.acc_approval_status != 1 or application.lib_approval_status != 1 or application.hod_approval_status != 1) %}
+                    <div class="status-icon icon-processing"><i class="fas fa-spinner"></i></div>
+                    <div class="status-text">Your application is under scrutiny. Please wait for the approval from all departments.</div>
+                {% elif application.isSubmitted == 1 and (application.acc_approval_status == 1 and application.lib_approval_status == 1 and application.hod_approval_status == 1) %}
+                    <div class="status-icon icon-processing"><i class="fas fa-spinner"></i></div>
+                    <div class="status-text">All approvals received! Your leaving certificate is being processed.</div>
+                {% elif application.LCgenerated == 1 %}
+                    <div class="status-icon icon-ready"><i class="fas fa-check-circle"></i></div>
+                    <div class="status-text">Your leaving certificate is ready for collection. Please visit the office to collect your document.</div>
+                {% else %}
+    <div class="status-icon icon-pending"><i class="fas fa-question-circle"></i></div>
+    <div class="status-text">Status Unknown. Please contact the administration.</div>
+                {% endif %}
+            </div>
 
-    <!-- make reapply button make make it work -->
-     <!-- show the lc pdf once generated -->
+            <div class="status-card">
+                <h3>Quick Actions</h3>
+                <div class="status-text">
+                    {% if application.isSubmitted == 0 %}
+                        Start your leaving certificate application process by clicking the apply button.
+                    {% elif application.LCgenerated == 1 %}
+                        Your document is ready for collection.
+                    {% else %}
+                        Track your application progress below.
+                    {% endif %}
+                </div>
+                <div style="margin-top: 20px;">
+                    {% if application.isSubmitted == 0 %}
+                        <a href="/apply" class="btn">Start Application</a>
+                    {% elif application.LCgenerated == 1 %}
+                        <button class="btn" onclick="alert('Please visit the office to collect your document')">Collection Info</button>
+                    {% else %}
+                        <button class="btn-secondary btn" onclick="window.location.reload()">Refresh Status</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
 
+        {% if application.isSubmitted == 1 %}
+        <div class="approval-section">
+            <h2 class="section-title">Approval Status</h2>
+            <div class="approval-grid">
+                <div class="approval-card">
+                    <div class="approval-header">
+                        <div class="approval-icon" style="background: #3498DB;"><i class="fas fa-building"></i></div>
+                        <div class="approval-title">Head of Department</div>
+                        <div class="approval-status 
+                            {% if application.hod_approval_status == 0 %}status-pending-small
+                            {% elif application.hod_approval_status == 1 %}status-approved-small
+                            {% elif application.hod_approval_status == 2 %}status-rejected-small
+                            {% endif %}">
+                            {% if application.hod_approval_status == 0 %}Pending
+                            {% elif application.hod_approval_status == 1 %}Approved
+                            {% elif application.hod_approval_status == 2 %}Rejected
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
 
+                <div class="approval-card">
+                    <div class="approval-header">
+                        <div class="approval-icon" style="background: #9B59B6;"><i class="fas fa-book"></i></div>
+                        <div class="approval-title">Library Department</div>
+                        <div class="approval-status 
+                            {% if application.lib_approval_status == 0 %}status-pending-small
+                            {% elif application.lib_approval_status == 1 %}status-approved-small
+                            {% elif application.lib_approval_status == 2 %}status-rejected-small
+                            {% endif %}">
+                            {% if application.lib_approval_status == 0 %}Pending
+                            {% elif application.lib_approval_status == 1 %}Approved
+                            {% elif application.lib_approval_status == 2 %}Rejected
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
 
+                <div class="approval-card">
+                    <div class="approval-header">
+                        <div class="approval-icon" style="background: #27AE60;"><i class="fas fa-money-bill-wave"></i></div>
+                        <div class="approval-title">Accounts Department</div>
+                        <div class="approval-status 
+                            {% if application.acc_approval_status == 0 %}status-pending-small
+                            {% elif application.acc_approval_status == 1 %}status-approved-small
+                            {% elif application.acc_approval_status == 2 %}status-rejected-small
+                            {% endif %}">
+                            {% if application.acc_approval_status == 0 %}Pending
+                            {% elif application.acc_approval_status == 1 %}Approved
+                            {% elif application.acc_approval_status == 2 %}Rejected
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
 
+        {% if application.isSubmitted == 1 and (application.acc_approval_status == 2 or application.lib_approval_status == 2 or application.hod_approval_status == 2) %}
+        <div class="rejection-section">
+            <h2 class="section-title">Rejection Details</h2>
+            <div class="rejection-cards">
+                {% if application.acc_approval_status == 2 %}
+                <div class="rejection-card">
+                    <div class="rejection-header">
+                        <div class="rejection-icon"><i class="fas fa-money-bill-wave"></i></div>
+                        <div class="rejection-title">Rejected by Accounts Department</div>
+                    </div>
+                    <div class="rejection-details">
+                        <span class="rejection-label">Remarks:</span>
+                        <div class="rejection-text">{{ application.acc_remarks or 'No remarks provided' }}</div>
+                        <span class="rejection-label">Reason:</span>
+                        <div class="rejection-text">{{ application.acc_rejection_reason or 'No reason provided' }}</div>
+                    </div>
+                    <button class="btn" onclick="window.location.href='/apply'">Re-Apply</button>
+                </div>
+                {% endif %}
 
+                {% if application.lib_approval_status == 2 %}
+                <div class="rejection-card">
+                    <div class="rejection-header">
+                        <div class="rejection-icon"><i class="fas fa-book"></i></div>
+                        <div class="rejection-title">Rejected by Library Department</div>
+                    </div>
+                    <div class="rejection-details">
+                        <span class="rejection-label">Remarks:</span>
+                        <div class="rejection-text">{{ application.lib_remarks or 'No remarks provided' }}</div>
+                        <span class="rejection-label">Reason:</span>
+                        <div class="rejection-text">{{ application.lib_rejection_reason or 'No reason provided' }}</div>
+                    </div>
+                    <button class="btn" onclick="window.location.href='/apply'">Re-Apply</button>
+                </div>
+                {% endif %}
 
+                {% if application.hod_approval_status == 2 %}
+                <div class="rejection-card">
+                    <div class="rejection-header">
+                        <div class="rejection-icon"><i class="fas fa-building"></i></div>
+                        <div class="rejection-title">Rejected by Head of Department</div>
+                    </div>
+                    <div class="rejection-details">
+                        <span class="rejection-label">Remarks:</span>
+                        <div class="rejection-text">{{ application.hod_remarks or 'No remarks provided' }}</div>
+                        <span class="rejection-label">Reason:</span>
+                        <div class="rejection-text">{{ application.hod_rejection_reason or 'No reason provided' }}</div>
+                    </div>
+                    <button class="btn" onclick="window.location.href='/apply'">Re-Apply</button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
 </body>
-</html> 
+</html>

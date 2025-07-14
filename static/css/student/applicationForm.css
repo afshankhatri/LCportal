@@ -1,0 +1,180 @@
+ body {
+            background: #f5eee6;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        /* Background Geometric Shapes */
+        .bg-decoration {
+            position: absolute;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        .bg-decoration::before {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: #E67E22;
+            border-radius: 20px;
+            top: 50px;
+            left: 50px;
+            transform: rotate(45deg);
+        }
+        .bg-decoration::after {
+            content: '';
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: #D35400;
+            border-radius: 50%;
+            top: 200px;
+            right: 100px;
+        }
+        .bg-shapes {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(230, 126, 34, 0.05);
+            border-radius: 50%;
+            top: 60%;
+            left: -100px;
+            z-index: 0;
+        }
+        .bg-shapes2 {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(211, 84, 0, 0.08);
+            border-radius: 15px;
+            top: 10%;
+            right: -50px;
+            transform: rotate(30deg);
+            z-index: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto 0 auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 6px 32px rgba(0,0,0,0.09);
+            padding: 24px 18px 18px 18px; /* Reduced padding */
+            position: relative;
+            z-index: 1;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+        .header h1 {
+            font-size: 2.2rem;
+            color: #2d3a4a;
+            margin-bottom: 8px;
+        }
+        .header p {
+            color: #6c757d;
+            font-size: 1rem;
+        }
+        .form-section {
+            display: flex;
+            justify-content: center;
+        }
+        .form-card {
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 0;
+            width: 100%;
+            max-width: 480px;
+        }
+        form label {
+            display: block;
+            margin-top: 14px;
+            margin-bottom: 4px;
+            color: #2d3a4a;
+            font-weight: 500;
+        }
+        form input[type="text"],
+        form input[type="number"],
+        form textarea {
+            width: 100%;
+            padding: 9px 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+            background: #fff;
+            margin-bottom: 2px;
+            transition: border 0.2s;
+        }
+        form input[type="text"]:focus,
+        form input[type="number"]:focus,
+        form textarea:focus {
+            border: 1.5px solid #ff6600;
+            outline: none;
+        }
+        form textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: flex-start;
+            margin-top: 12px;
+            margin-bottom: 12px;
+        }
+        .checkbox-container input[type="checkbox"] {
+            margin-right: 10px;
+            margin-top: 3px;
+        }
+        .checkbox-container label {
+            font-size: 0.98rem;
+            color: #444;
+            font-weight: 400;
+        }
+        #submitButton {
+            margin-top: 14px;
+            width: 100%;
+            background: #ff6600;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 11px 0;
+            font-size: 1.08rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        #submitButton:hover {
+            background: #e65c00;
+        }
+        .logout-btn {
+            position: absolute;
+            top: 18px;
+            right: 30px;
+            background: #fff;
+            color: #ff6600;
+            border: 1.5px solid #ff6600;
+            border-radius: 6px;
+            padding: 7px 16px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background 0.2s, color 0.2s;
+            z-index: 2;
+        }
+        .logout-btn:hover {
+            background: #ff6600;
+            color: #fff;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px 2vw;
+            }
+            .form-card {
+                padding: 0;
+            }
+            .logout-btn {
+                right: 6px;
+                top: 6px;
+                padding: 6px 8px;
+            }
+        }

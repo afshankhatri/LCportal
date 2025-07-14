@@ -3,60 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LC collect</title>
-
+    <title>LC Collect - Rejected Forms</title>
     <link rel="stylesheet" href="/static/css/HOD/landingHOD.css">
-
 </head>
 <body>
-    <h2>this page is for rejected forms</h2>
 
-        {% for stud in studentDetails %}
-        <div class="card">
-            <div class="card-body">
-                <!-- <h4><strong>{{stud.name}}</strong></h4> -->
-                <p><strong>G_R_No:</strong> {{stud.GR_no}}</p>
-                <p><strong>Branch:</strong> 
-                    {% if stud.courseName == 0 %}
-                        AIML
-                    {% elif stud.courseName == 1 %}
-                        IOT
-                    {% elif stud.courseName == 2 %}
-                        Computer Science
-                    {% elif stud.courseName == 3 %}
-                        IT
-                    {% elif stud.courseName == 4 %}
-                        EXTC
-                    {% elif stud.courseName == 5 %}
-                        Mech
-                    {% elif stud.courseName == 6 %}
-                        Civil
-                    {% else %}
-                        Unknown
-                    {% endif %}
-                </p>
+    <h2>Page for HOD Rejected Forms</h2>
 
-                
-                <button class="btn btn-secondary" onclick="openModal('{{ stud.courseName }}', '{{ stud.user_id }}', '{{ stud.courseName }}', '{{stud.GR_no}}' ,'{{ stud.sr_no }}') ">View Details</button>
+    {% for stud in studentDetails %}
+    <div class="card">
+        <div class="card-body">
+            <p><strong>G_R_No:</strong> {{ stud.GR_no }}</p>
+            <p><strong>Branch:</strong> 
+                {% if stud.courseName == 0 %} AIML
+                {% elif stud.courseName == 1 %} IOT
+                {% elif stud.courseName == 2 %} Computer Science
+                {% elif stud.courseName == 3 %} IT
+                {% elif stud.courseName == 4 %} EXTC
+                {% elif stud.courseName == 5 %} Mech
+                {% elif stud.courseName == 6 %} Civil
+                {% else %} Unknown
+                {% endif %}
+            </p>
 
-                <!-- Modal for details -->
-                <div class="modal" id="userModal">
-                    <div class="modal-content">
-                        <span class="close-btn" onclick="closeModal()">&times;</span>
-                        <h3>User Details</h3>
-                        <p><strong>Name:</strong> <span id="modalName"></span></p>
-                        <p><strong>Email:</strong> <span id="modalEmail"></span></p>
-                        <p><strong>Branch:</strong> <span id="modalBranch"></span></p>
-                        <p><strong>GR_no:</strong> <span id="modalGRNo"></span></p>
-                        <!-- Add more user info here -->
-                    </div>
-                </div>
-            </div>
-        </div>  
+            <button class="btn btn-secondary" onclick="openModal('{{ stud.courseName }}', '{{ stud.user_id }}', '{{ stud.courseName }}', '{{ stud.GR_no }}', '{{ stud.sr_no }}')">
+                View Details
+            </button>
+
+        </div>
+    </div>
     {% endfor %}
 
-    <script src="/static/js/HOD/rejectedHOD.js"></script>
+    <!-- Global Modal -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h3>User Details</h3>
+            <p><strong>Name:</strong> <span id="modalName"></span></p>
+            <p><strong>Email:</strong> <span id="modalEmail"></span></p>
+            <p><strong>Branch:</strong> <span id="modalBranch"></span></p>
+            <p><strong>GR_no:</strong> <span id="modalGRNo"></span></p>
+        </div>
+    </div>
 
+    <script src="/static/js/HOD/rejectedHOD.js"></script>
 
 </body>
 </html>

@@ -4,126 +4,135 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LC collect</title>
-    
-
     <link rel="stylesheet" href="/static/css/librarian/landingLibrary.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <h2>Landing Page Of Library</h2>
-    <a id="accepted" href="/librarianAcceptedForms">Accepted</a>
-    <br>
-    <br>
-    <a id="rejected" href="/librarianRejectedForms">Rejected</a>
-    
-    <br><br/>
-    {% for stud in studentDetails %}
-        <div class="card">
-            
-            <div class="card-body">
-              
-              <!-- preview Info strt -->
-                <!-- <p><strong>Name:</strong> {{stud.name}}</p>  -->
-                          <!-- NOTE :  name is not appearing ... since it is not getting imported from user table to students tabel ... put a query in such a way that it store the name in the students table as well -->
-                <p><strong>G_R_No:</strong> {{stud.GR_no}}</p>
+    <div class="container">
+        <div class="header">
+            <h1>Library Department</h1>
+            <div class="subtitle">Welcome to the Leaving Certificate Management System</div>
+            <a class="logout-btn" href="/logout">Logout</a>
+        </div>
 
-                <p><strong>Branch:</strong> 
-                    {% if stud.courseName == 0 %}
-                        AIML
-                    {% elif stud.courseName == 1 %}
-                        IOT
-                    {% elif stud.courseName == 2 %}
-                        Computer Science
-                    {% elif stud.courseName == 3 %}
-                        IT
-                    {% elif stud.courseName == 4 %}
-                        EXTC
-                    {% elif stud.courseName == 5 %}
-                        Mech
-                    {% elif stud.courseName == 6 %}
-                        Civil
-                    {% else %}
-                        Unknown
-                    {% endif %}
-                </p>
+        <div class="nav-links">
+            <a id="accepted" href="/librarianAcceptedForms">
+                <i class="fas fa-check-circle"></i> Approved Forms
+            </a>
+            <a id="rejected" href="/librarianRejectedForms">
+                <i class="fas fa-times-circle"></i> Rejected Forms
+            </a>
+        </div>
 
-                {% if stud.lib_approval_status == 1%}
-                    <button disabled>Approved</button>
-                {% else %}
-                    <button onclick="this.disabled = true; setApproval('{{ stud.sr_no }}')">Approve</button>
-                {% endif %}
-              
-                <button class="btn btn-secondary" onclick="openModal('{{ stud.courseName }}', '{{ stud.user_id }}', '{{ stud.courseName }}', '{{stud.GR_no}}' ,'{{ stud.sr_no }}','{{ stud.lib_approval_status }}') ">View Details</button>
-
-                {% if stud.lib_approval_status ==2 %}
-                    <button disabled>Rejected</button>
-                {% else %}
-                     <button onclick="openRejectModal('{{ stud.sr_no }}')">Reject</button>
-                {% endif %}
-                <!-- preview Info end -->
-
-
-                <!-- Modal for details  start-->
-                <div class="modal" id="userModal">
-                    <div class="modal-content">
-                        <span class="close-btn" onclick="closeModal()">&times;</span>
-                        <h3>User Details</h3>
-                        <p><strong>Name:</strong> <span id="modalName"></span></p>
-                        <p><strong>Email:</strong> <span id="modalEmail"></span></p>
-                        <p><strong>Branch:</strong> <span id="modalBranch"></span></p>
-                        <p><strong>GR_no:</strong> <span id="modalGRNo"></span></p>
-                        <!-- Add more user info here -->
-
-                        <br>
-                        <!-- for approval -->
-                        <!-- {% if stud.lib_approval_status == 1%}
-                            <button id="modalApproveBtn" disabled>Approved</button>
+        <div class="dashboard-cards">
+            {% for stud in studentDetails %}
+            <div class="card">
+                <div class="status-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h2>Student Application</h2>
+                <div class="card-content">
+                    <p><strong>GR Number:</strong> {{stud.GR_no}}</p>
+                    <p><strong>Branch:</strong> 
+                        {% if stud.courseName == 0 %}AIML
+                        {% elif stud.courseName == 1 %}IOT
+                        {% elif stud.courseName == 2 %}Computer Science
+                        {% elif stud.courseName == 3 %}IT
+                        {% elif stud.courseName == 4 %}EXTC
+                        {% elif stud.courseName == 5 %}Mech
+                        {% elif stud.courseName == 6 %}Civil
+                        {% else %}Unknown{% endif %}
+                    </p>
+                    
+                    <div class="status-badge">
+                        {% if stud.lib_approval_status == 1 %}
+                            <span class="approved-badge">
+                                <i class="fas fa-check"></i> Approved
+                            </span>
+                        {% elif stud.lib_approval_status == 2 %}
+                            <span class="rejected-badge">
+                                <i class="fas fa-times"></i> Rejected
+                            </span>
                         {% else %}
-                            <button id="modalApproveBtn" onclick="this.disabled = true; setApproval('{{ stud.sr_no }}')">Approve</button>
-                        {% endif %} -->
+                            <span class="pending-badge">
+                                <i class="fas fa-clock"></i> Pending
+                            </span>
+                        {% endif %}
+                    </div>
 
-                        <!-- for rejection -->
-                        <!-- {% if stud.lib_approval_status == 2%}
-                            <button id="modalApproveBtn" disabled>Rejected</button>
+                    <div class="button-group">
+                        {% if stud.lib_approval_status == 1 %}
+                            <button class="btn btn-primary" disabled>
+                                <i class="fas fa-check"></i> Approved
+                            </button>
                         {% else %}
-                            <button onclick="openRejectModal('{{ stud.sr_no }}')">Reject</button>
-                        {% endif %} -->
-                        <button id="modalApproveBtn">Approve</button>
-                        <button id="modalRejectBtn">Reject</button>
+                            <button class="btn btn-primary" onclick="this.disabled = true; setApproval('{{ stud.sr_no }}')">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                        {% endif %}
+
+                        <button class="btn btn-secondary" onclick="openModal('{{ stud.courseName }}', '{{ stud.user_id }}', '{{ stud.courseName }}', '{{stud.GR_no}}' ,'{{ stud.sr_no }}','{{ stud.lib_approval_status }}')">
+                            <i class="fas fa-eye"></i> View Details
+                        </button>
+
+                        {% if stud.lib_approval_status == 2 %}
+                            <button class="btn btn-danger" disabled>
+                                <i class="fas fa-times"></i> Rejected
+                            </button>
+                        {% else %}
+                            <button class="btn btn-danger" onclick="openRejectModal('{{ stud.sr_no }}')">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        {% endif %}
                     </div>
                 </div>
-                <!-- Modal for details end -->
-
-                <!-- modal for rejection pop-up start-->
-                  <div id="modal_overlay{{ stud.sr_no }}" class="modal_overlay" style="display:none;">
-                    <div class="modal_center_wrapper">
-                      <div id="modal_popup_container{{ stud.sr_no }}" class="modal_popup_container">
-                        <button class="modal_close_button" id="close_modal_icon{{ stud.sr_no }}">&times;</button>
-
-                        <label class="form_label" for="remarks_select_field{{ stud.sr_no }}">Remarks</label>
-                        <select id="remarks_select_field{{ stud.sr_no }}" class="form_select_dropdown">
-                          <option value="Form filled improperly">Form filled improperly</option>
-                          <option value="Insufficient data">Insufficient data</option>
-                          <option value="Others">Others</option>
-                        </select>
-
-                        <label class="form_label" for="custom_rejection_reason_input{{ stud.sr_no }}">Rejection Reason</label>
-                        <textarea id="custom_rejection_reason_input{{ stud.sr_no }}" class="form_textarea_input" placeholder="Enter reason here..."></textarea>
-
-                        <button id="modal_reject_button{{ stud.sr_no }}">Reject</button>
-                      </div>
-                    </div>
-                  </div>
-                <!-- modal for rejection pop-up end-->
-
-                
-
             </div>
-        </div>  
-    {% endfor %}
+            {% endfor %}
+        </div>
 
-    <script src="/static/js/librarian/landinglib.js"></script> 
+        <!-- Global Modal for details -->
+        <div class="modal" id="userModal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+                <h3>Student Details</h3>
+                <p><strong>Name:</strong> <span id="modalName"></span></p>
+                <p><strong>Email:</strong> <span id="modalEmail"></span></p>
+                <p><strong>Branch:</strong> <span id="modalBranch"></span></p>
+                <p><strong>GR Number:</strong> <span id="modalGRNo"></span></p>
+                <br>
+                <button class="btn btn-primary" id="modalApproveBtn">
+                    <i class="fas fa-check"></i> Approve
+                </button>
+                <button class="btn btn-danger" id="modalRejectBtn">
+                    <i class="fas fa-times"></i> Reject
+                </button>
+            </div>
+        </div>
 
-   
+        <!-- Rejection Modal Template -->
+        {% for stud in studentDetails %}
+        <div id="modal_overlay{{ stud.sr_no }}" class="modal_overlay">
+            <div class="modal_center_wrapper">
+                <div id="modal_popup_container{{ stud.sr_no }}" class="modal_popup_container">
+                    <button class="modal_close_button" id="close_modal_icon{{ stud.sr_no }}">&times;</button>
+                    <h3>Reject Application</h3>
+                    <label class="form_label" for="remarks_select_field{{ stud.sr_no }}">Remarks</label>
+                    <select id="remarks_select_field{{ stud.sr_no }}" class="form_select_dropdown">
+                        <option value="Form filled improperly">Form filled improperly</option>
+                        <option value="Insufficient data">Insufficient data</option>
+                        <option value="Others">Others</option>
+                    </select>
+                    <label class="form_label" for="custom_rejection_reason_input{{ stud.sr_no }}">Rejection Reason</label>
+                    <textarea id="custom_rejection_reason_input{{ stud.sr_no }}" class="form_textarea_input" placeholder="Enter reason here..."></textarea>
+                    <button class="btn btn-danger" id="modal_reject_button{{ stud.sr_no }}">
+                        <i class="fas fa-times"></i> Reject
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 
+    <script src="/static/js/librarian/landinglib.js"></script>
 </body>
 </html>

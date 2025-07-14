@@ -7,64 +7,65 @@ function setApproval(studentId) {
         },
         body: JSON.stringify({ student_id: studentId })  // sending student ID to backend
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Success:', data.message);
-        // You can also update UI here if needed
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
-}  
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data.message);
+            // You can also update UI here if needed
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+}
 
 // for rejection of form
-    // Store current student being rejected
-    function openRejectModal(srNo) {
-  currentStudentId = srNo;
-  document.getElementById("modal_overlay" + srNo).style.display = "block";
+// Store current student being rejected
+function openRejectModal(srNo) {
+    currentStudentId = srNo;
+    const modalOverlay = document.getElementById("modal_overlay" + srNo);
+    modalOverlay.style.display = "flex"; // Changed from "block" to "flex"
 
-  // Set close button click dynamically
-  document.getElementById("close_modal_icon" + srNo).onclick = () => {
-    document.getElementById("modal_overlay" + srNo).style.display = "none";
-  };
+    // Set close button click dynamically
+    document.getElementById("close_modal_icon" + srNo).onclick = () => {
+        modalOverlay.style.display = "none";
+    };
 
-  // Also set window click dynamically
-  window.onclick = function(event) {
-    if (event.target === document.getElementById("modal_overlay" + srNo)) {
-      document.getElementById("modal_overlay" + srNo).style.display = "none";
-    }
-  };
+    // Also set window click dynamically
+    window.onclick = function (event) {
+        if (event.target === modalOverlay) {
+            modalOverlay.style.display = "none";
+        }
+    };
 
-  // Finally, attach the Reject button handler here:
-  document.getElementById("modal_reject_button" + srNo).onclick = function() {
-    const acc_remarks = document.getElementById("remarks_select_field" + srNo).value;
-    const acc_rejection_reason = document.getElementById("custom_rejection_reason_input" + srNo).value;
+    // Finally, attach the Reject button handler here:
+    document.getElementById("modal_reject_button" + srNo).onclick = function () {
+        const acc_remarks = document.getElementById("remarks_select_field" + srNo).value;
+        const acc_rejection_reason = document.getElementById("custom_rejection_reason_input" + srNo).value;
 
-    if (!currentStudentId) {
-      alert("No student selected!");
-      return;
-    }
+        if (!currentStudentId) {
+            alert("No student selected!");
+            return;
+        }
 
-    fetch('/updateRejectionOfacc', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        student_id: currentStudentId,
-        acc_remarks: acc_remarks,
-        acc_rejection_reason: acc_rejection_reason
-      })
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Success:', data.message);
-      window.location.reload();
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-  };
+        fetch('/updateRejectionOfacc', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                student_id: currentStudentId,
+                acc_remarks: acc_remarks,
+                acc_rejection_reason: acc_rejection_reason
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data.message);
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    };
 }
 
 
@@ -119,25 +120,25 @@ function openModal(courseName, userId, branch, GR_no, srNo, accStatus) {
     }
 
     // Update Approve button click handler
-    approveBtn.onclick = function() {
+    approveBtn.onclick = function () {
         this.disabled = true;
         setApproval(srNo);
     };
 
     // Update Reject button click handler
-    rejectBtn.onclick = function() {
+    rejectBtn.onclick = function () {
         openRejectModal(srNo);
     };
 
     document.getElementById("userModal").style.display = "flex";
 }
-    
+
 function closeModal() {
-    document.getElementById("userModal" ).style.display = "none";
+    document.getElementById("userModal").style.display = "none";
 }
-    
+
 // Optional: Close modal on outside click
-window.onclick = function(event) {
+window.onclick = function (event) {
     const modal = document.getElementById("userModal");
     if (event.target == modal) {
         closeModal();

@@ -3,85 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LC collect</title>
+    <title>LC Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/static/css/LCgenerator/LCgenerator.css">
 </head>
 <body>
-    <h2>Landing Page Of LC generator</h2>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div>
+                <h1><i class="fas fa-certificate"></i> LC Generator</h1>
+                <p>Leaving Certificate Management System</p>
+            </div>
+            <a class="logout-btn" href="/logout" style="text-decoration: none;">
+                <i class="fas fa-sign-out-alt"></i> <strong>Logout</strong>  
+            </a>
+        </div>
+    </div>
 
+    <!-- Main container -->
+    <div class="container">
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-btn active" data-tab="pending">
+                <i class="fas fa-clock"></i> Pending Collection
+            </button>
+            <button class="tab-btn" data-tab="generated">
+                <i class="fas fa-check-circle"></i> Generated
+            </button>
+        </div>
 
+        <!-- Cards Grid -->
+        <div class="cards-grid" id="cardsContainer">
+            {% for stud in studentDetails %}
+                <div class="student-card" data-status="{% if stud.LCgenerated == 1 %}generated{% else %}pending{% endif %}">
+                    <div class="card-header">
+                        <div class="student-icon">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="card-title">
+                            <h3>{{ stud.name }}</h3>
+                            <div class="status-badge {% if stud.LCgenerated == 1 %}status-generated{% else %}status-pending{% endif %}">
+                                {% if stud.LCgenerated == 1 %}
+                                    <i class="fas fa-check-circle"></i> Generated
+                                {% else %}
+                                    <i class="fas fa-clock"></i> Pending Collection
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-info">
+                        <div class="info-row">
+                            <span class="info-label">GR Number:</span>
+                            <span class="info-value">{{ stud.GR_no }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Branch:</span>
+                            <span class="info-value">
+                                {% if stud.courseName == 0 %}
+                                    AIML
+                                {% elif stud.courseName == 1 %}
+                                    IOT
+                                {% elif stud.courseName == 2 %}
+                                    Computer Science
+                                {% elif stud.courseName == 3 %}
+                                    IT
+                                {% elif stud.courseName == 4 %}
+                                    EXTC
+                                {% elif stud.courseName == 5 %}
+                                    Mech
+                                {% elif stud.courseName == 6 %}
+                                    Civil
+                                {% else %}
+                                    Unknown
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Status:</span>
+                            <span class="info-value">
+                                {% if stud.LCgenerated == 1 %}
+                                    Collected
+                                {% else %}
+                                    Ready for Collection
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
 
-    {% for stud in studentDetails %}
-        <div class="card">
-            <div class="card-body">
-                <!-- <h4><strong>{{stud.name}}</strong></h4> -->
-                <p><strong>G_R_No:</strong> {{stud.GR_no}}</p>
-
-                <p><strong>Branch:</strong> 
-                    {% if stud.courseName == 0 %}
-                        AIML
-                    {% elif stud.courseName == 1 %}
-                        IOT
-                    {% elif stud.courseName == 2 %}
-                        Computer Science
-                    {% elif stud.courseName == 3 %}
-                        IT
-                    {% elif stud.courseName == 4 %}
-                        EXTC
-                    {% elif stud.courseName == 5 %}
-                        Mech
-                    {% elif stud.courseName == 6 %}
-                        Civil
-                    {% else %}
-                        Unknown
-                    {% endif %}
-                </p>
-
-                <button class="btn btn-secondary" onclick="openModal('{{ stud.courseName }}', '{{ stud.user_id }}', '{{ stud.courseName }}', '{{stud.GR_no}}' ,'{{ stud.sr_no }}','{{ stud.LCgenerated }}') ">View Details</button>
-
-
-                <button class="btn btn-primary call-button"
-                    data-email="{{ stud.user_id }}"
-                    data-name="{{ stud.name }}">
-                    {% if stud.LCgenerated == 1 %}
-                        Sent
-                    {% else %}
-                        Call Student for Collection
-                    {% endif %}
-                </button>
-
-                <!-- Modal for details starts-->
-                <div class="modal" id="userModal">
-                    <div class="modal-content">
-                        <span class="close-btn" onclick="closeModal()">&times;</span>
-                        <h3>User Details</h3>
-                        <p><strong>Name:</strong> <span id="modalName"></span></p>
-                        <p><strong>Email:</strong> <span id="modalEmail"></span></p>
-                        <p><strong>Branch:</strong> <span id="modalBranch"></span></p>
-                        <p><strong>GR_no:</strong> <span id="modalGRNo"></span></p>
-                        <!-- Add more user info here -->
+                    <div class="card-actions">
+                        <button class="btn btn-secondary" onclick="openModal('{{ stud.courseName }}', '{{ stud.user_id }}', '{{ stud.courseName }}', '{{ stud.GR_no }}', '{{ stud.sr_no }}', '{{ stud.LCgenerated }}')">
+                            <i class="fas fa-eye"></i> View Details
+                        </button>
+                        
+                        {% if stud.LCgenerated == 1 %}
+                            <button class="btn btn-success btn-disabled" disabled>
+                                <i class="fas fa-check"></i> Collected
+                            </button>
+                        {% else %}
+                            <button class="btn btn-primary call-button" data-email="{{ stud.user_id }}" data-name="{{ stud.name }}">
+                                <i class="fas fa-phone"></i> Call for Collection
+                            </button>
+                        {% endif %}
                     </div>
                 </div>
-                <!-- Modal for details ends -->
+            {% endfor %}
+        </div>
+
+        <!-- Empty state for when no cards match filter -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <i class="fas fa-inbox"></i>
+            <h3>No Records Found</h3>
+            <p>No students found for the selected category.</p>
+        </div>
+    </div>
+
+    <!-- Modal for details -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h3><i class="fas fa-user"></i> Student Details</h3>
+            <div class="card-info">
+                <div class="info-row">
+                    <span class="info-label">Name:</span>
+                    <span class="info-value" id="modalName">Loading...</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value" id="modalEmail">Loading...</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Branch:</span>
+                    <span class="info-value" id="modalBranch">Loading...</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">GR Number:</span>
+                    <span class="info-value" id="modalGRNo">Loading...</span>
+                </div>
             </div>
-        </div>  
-    {% endfor %}
+        </div>
+    </div>
 
     <script src="/static/js/LCgenerator/LCgenerator.js"></script>
-     
-
-<!-- interface to give tentitive dates to user to collect the lc  -->
- <!-- input field for uploading of soft copy once generated  -->
-  <!-- send email to student once generated  with date and time to collect the lc -->
-
-
 </body>
 </html>
-
-
-
-<!-- now we need to work on ... giving final dates to the students ,for collecting the LC 
-apart from this ,we need to work on view details button and also on the ,rejecting the form 
-also if the formis rejected then the interface for the student to make the necessary chantes 
-also display of remark given at the time of rejectioin should be displayed to the student so that he can make the necessary changes and resubmit the form
---> 

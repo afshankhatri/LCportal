@@ -1,22 +1,379 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In</title>
+  <meta charset="UTF-8">
+  <title>Landing Page with SVG</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      overflow-x: hidden;
+    }
+
+    .hero-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* You can customize placement like this */
+    .svg-container {
+      width: 100vw;
+      height: 100vh;
+      min-height: 600px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      overflow: hidden;
+    }
+    .svg-container svg {
+      width: 100vw;
+      height: 100vh;
+      min-height: 600px;
+      display: block;
+    }
+
+     .document-elements {
+      animation: documentFloat 10s ease-in-out infinite;
+    }
+    
+    .academic-seals {
+      animation: gentleRotate 15s linear infinite;
+    }
+    
+    .floating-elements {
+      animation: academicFloat 8s ease-in-out infinite;
+    }
+    
+    @keyframes documentFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+    
+    @keyframes gentleRotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes academicFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+
+
+    /* container */
+
+    .signin-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255,255,255,0.97);
+      box-shadow: 0 8px 32px rgba(44,62,80,0.18);
+      border-radius: 18px;
+      padding: 38px 36px 28px 36px;
+      min-width: 350px;
+      max-width: 95vw;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .signin-container h2 {
+      margin-bottom: 18px;
+      color: #2C3E50;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 2rem;
+      text-align: center;
+    }
+    .signin-form {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      gap: 12px;
+    }
+    .signin-form label {
+      font-size: 15px;
+      color: #34495E;
+      margin-bottom: 2px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    .signin-form input {
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 7px;
+      font-size: 16px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .signin-form input:focus {
+      border-color: #F39C12;
+    }
+    .signin-form button {
+      margin-top: 12px;
+      padding: 12px 0;
+      background: linear-gradient(90deg, #F39C12 0%, #E67E22 100%);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      transition: background 0.2s;
+    }
+    .signin-form button:hover {
+      background: linear-gradient(90deg, #E67E22 0%, #F39C12 100%);
+    }
+    .signin-container p {
+      margin: 0;
+      color: #34495E;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 15px;
+      text-align: center;
+    }
+    .signin-container a {
+      color: #F39C12;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .signin-container a:hover {
+      text-decoration: underline;
+    }
+    @media (max-width: 600px) {
+      .signin-container {
+        min-width: 90vw;
+        padding: 18px 6vw 14px 6vw;
+      }
+    }
+  </style>
 </head>
 <body>
+
+  <div class="svg-container">
+    <!-- Paste your entire SVG here -->
+    <svg viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Professional Gradients -->
+    <linearGradient id="creamGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FEFEFE;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F5F5F0;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="navyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2C3E50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#34495E;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F39C12;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E67E22;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="softNavy" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2C3E50;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#34495E;stop-opacity:0.3" />
+    </linearGradient>
+    
+    <linearGradient id="softGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F39C12;stop-opacity:0.2" />
+      <stop offset="100%" style="stop-color:#E67E22;stop-opacity:0.4" />
+    </linearGradient>
+    
+    <!-- Document Patterns -->
+    <pattern id="documentLines" x="0" y="0" width="200" height="30" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="25" x2="200" y2="25" stroke="url(#softNavy)" stroke-width="0.5" opacity="0.3"/>
+    </pattern>
+    
+    <pattern id="watermark" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+      <circle cx="50" cy="50" r="20" fill="none" stroke="url(#softGold)" stroke-width="1" opacity="0.1"/>
+    </pattern>
+  </defs>
+  
+  <!-- Professional Document Background -->
+  <rect width="1200" height="600" fill="url(#creamGradient)"/>
+  
+  <!-- Subtle Watermark Pattern -->
+  <rect width="1200" height="600" fill="url(#watermark)"/>
+  
+  <!-- Document Elements -->
+  <g class="document-elements">
+    <!-- Certificate Border Frame -->
+    <rect x="50" y="50" width="300" height="200" fill="none" stroke="url(#navyGradient)" stroke-width="2" rx="10" opacity="0.3">
+      <animate attributeName="opacity" values="0.3;0.5;0.3" dur="8s" repeatCount="indefinite"/>
+    </rect>
+    
+    <!-- ID Card Frame -->
+    <rect x="850" y="350" width="250" height="150" fill="url(#softNavy)" stroke="url(#goldGradient)" stroke-width="1" rx="15" opacity="0.4">
+      <animate attributeName="opacity" values="0.4;0.6;0.4" dur="6s" repeatCount="indefinite"/>
+    </rect>
+    
+    <!-- Document Pages -->
+    <rect x="400" y="100" width="180" height="240" fill="white" stroke="url(#softNavy)" stroke-width="1" rx="5" opacity="0.5">
+      <animate attributeName="y" values="100;95;100" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.5;0.7;0.5" dur="5s" repeatCount="indefinite"/>
+    </rect>
+    
+    <rect x="410" y="110" width="160" height="220" fill="url(#documentLines)" opacity="0.3"/>
+    
+    <!-- Leaving Certificate -->
+    <rect x="650" y="80" width="200" height="140" fill="white" stroke="url(#goldGradient)" stroke-width="2" rx="8" opacity="0.4">
+      <animate attributeName="opacity" values="0.4;0.6;0.4" dur="7s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+  
+  <!-- Academic Seals and Emblems -->
+  <g class="academic-seals">
+    <!-- University Seal -->
+    <circle cx="150" cy="150" r="40" fill="none" stroke="url(#navyGradient)" stroke-width="3" opacity="0.3">
+      <animate attributeName="r" values="40;45;40" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="150" cy="150" r="25" fill="none" stroke="url(#goldGradient)" stroke-width="2" opacity="0.4">
+      <animate attributeName="r" values="25;30;25" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Certification Stamp -->
+    <circle cx="950" cy="150" r="30" fill="url(#softGold)" opacity="0.3">
+      <animate attributeName="r" values="30;35;30" dur="5s" repeatCount="indefinite"/>
+    </circle>
+    <text x="950" y="155" text-anchor="middle" font-family="serif" font-size="10" font-weight="bold" fill="url(#navyGradient)" opacity="0.6">VERIFIED</text>
+    
+    <!-- ID Badge -->
+    <rect x="100" y="400" width="80" height="120" fill="white" stroke="url(#navyGradient)" stroke-width="2" rx="5" opacity="0.4">
+      <animate attributeName="opacity" values="0.4;0.6;0.4" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="110" y="420" width="60" height="40" fill="url(#softNavy)" opacity="0.3"/>
+    <rect x="110" y="470" width="60" height="5" fill="url(#goldGradient)" opacity="0.5"/>
+    <rect x="110" y="480" width="60" height="5" fill="url(#goldGradient)" opacity="0.5"/>
+    <rect x="110" y="490" width="60" height="5" fill="url(#goldGradient)" opacity="0.5"/>
+  </g>
+  
+  <!-- Professional Text Lines -->
+  <g class="text-lines">
+    <!-- Document Lines -->
+    <line x1="420" y1="150" x2="560" y2="150" stroke="url(#navyGradient)" stroke-width="1" opacity="0.3">
+      <animate attributeName="opacity" values="0.3;0.6;0.3" dur="4s" repeatCount="indefinite"/>
+    </line>
+    <line x1="420" y1="170" x2="540" y2="170" stroke="url(#navyGradient)" stroke-width="1" opacity="0.3">
+      <animate attributeName="opacity" values="0.3;0.6;0.3" dur="5s" repeatCount="indefinite"/>
+    </line>
+    <line x1="420" y1="190" x2="570" y2="190" stroke="url(#navyGradient)" stroke-width="1" opacity="0.3">
+      <animate attributeName="opacity" values="0.3;0.6;0.3" dur="6s" repeatCount="indefinite"/>
+    </line>
+    
+    <!-- Certificate Lines -->
+    <line x1="670" y1="140" x2="830" y2="140" stroke="url(#goldGradient)" stroke-width="1" opacity="0.4">
+      <animate attributeName="opacity" values="0.4;0.7;0.4" dur="3s" repeatCount="indefinite"/>
+    </line>
+    <line x1="670" y1="160" x2="810" y2="160" stroke="url(#goldGradient)" stroke-width="1" opacity="0.4">
+      <animate attributeName="opacity" values="0.4;0.7;0.4" dur="4s" repeatCount="indefinite"/>
+    </line>
+  </g>
+  
+  <!-- Floating Academic Elements -->
+  <g class="floating-elements">
+    <!-- Graduation Cap -->
+    <g class="grad-cap" opacity="0.2">
+      <rect x="300" y="450" width="40" height="8" fill="url(#navyGradient)" rx="4"/>
+      <polygon points="280,450 360,450 340,430 300,430" fill="url(#navyGradient)"/>
+      <circle cx="340" cy="440" r="2" fill="url(#goldGradient)"/>
+      <animate attributeName="opacity" values="0.2;0.4;0.2" dur="7s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="translate" values="0,0; 20,-10; 0,0" dur="12s" repeatCount="indefinite"/>
+    </g>
+    
+    <!-- Diploma Roll -->
+    <g class="diploma" opacity="0.3">
+      <rect x="700" y="400" width="60" height="8" fill="url(#softNavy)" rx="4"/>
+      <rect x="680" y="398" width="4" height="12" fill="url(#goldGradient)" rx="2"/>
+      <rect x="776" y="398" width="4" height="12" fill="url(#goldGradient)" rx="2"/>
+      <animate attributeName="opacity" values="0.3;0.5;0.3" dur="8s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="translate" values="0,0; -15,5; 0,0" dur="10s" repeatCount="indefinite"/>
+    </g>
+    
+    <!-- Book Stack -->
+    <g class="books" opacity="0.2">
+      <rect x="500" y="500" width="40" height="6" fill="url(#navyGradient)" rx="1"/>
+      <rect x="502" y="492" width="36" height="6" fill="url(#goldGradient)" rx="1"/>
+      <rect x="504" y="484" width="32" height="6" fill="url(#navyGradient)" rx="1"/>
+      <animate attributeName="opacity" values="0.2;0.4;0.2" dur="6s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="translate" values="0,0; 10,-5; 0,0" dur="14s" repeatCount="indefinite"/>
+    </g>
+  </g>
+  
+  <!-- Decorative Corner Elements -->
+  <g class="corner-decorations">
+    <!-- Top Left Corner -->
+    <path d="M 0 0 L 50 0 L 50 10 L 10 10 L 10 50 L 0 50 Z" fill="url(#goldGradient)" opacity="0.3"/>
+    
+    <!-- Top Right Corner -->
+    <path d="M 1200 0 L 1150 0 L 1150 10 L 1190 10 L 1190 50 L 1200 50 Z" fill="url(#goldGradient)" opacity="0.3"/>
+    
+    <!-- Bottom Left Corner -->
+    <path d="M 0 600 L 50 600 L 50 590 L 10 590 L 10 550 L 0 550 Z" fill="url(#goldGradient)" opacity="0.3"/>
+    
+    <!-- Bottom Right Corner -->
+    <path d="M 1200 600 L 1150 600 L 1150 590 L 1190 590 L 1190 550 L 1200 550 Z" fill="url(#goldGradient)" opacity="0.3"/>
+  </g>
+  
+  <!-- Professional Geometric Accents -->
+  <g class="geometric-accents">
+    <!-- Hexagonal Pattern -->
+    <polygon points="800,250 820,260 820,280 800,290 780,280 780,260" fill="none" stroke="url(#navyGradient)" stroke-width="1" opacity="0.2">
+      <animateTransform attributeName="transform" type="rotate" values="0 800 270;360 800 270" dur="20s" repeatCount="indefinite"/>
+    </polygon>
+    
+    <!-- Diamond Shape -->
+    <polygon points="200,300 220,320 200,340 180,320" fill="url(#softGold)" opacity="0.3">
+      <animate attributeName="opacity" values="0.3;0.5;0.3" dur="5s" repeatCount="indefinite"/>
+    </polygon>
+    
+    <!-- Professional Lines -->
+    <line x1="0" y1="300" x2="1200" y2="300" stroke="url(#softNavy)" stroke-width="0.5" opacity="0.1"/>
+    <line x1="600" y1="0" x2="600" y2="600" stroke="url(#softNavy)" stroke-width="0.5" opacity="0.1"/>
+  </g>
+  
+  <!-- Subtle Floating Particles -->
+  <g class="particles">
+    <circle cx="350" cy="200" r="2" fill="url(#goldGradient)" opacity="0.4">
+      <animate attributeName="cy" values="200;180;200" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4;0.1;0.4" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    
+    <circle cx="750" cy="300" r="1.5" fill="url(#navyGradient)" opacity="0.3">
+      <animate attributeName="cy" values="300;280;300" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.3;0.1;0.3" dur="5s" repeatCount="indefinite"/>
+    </circle>
+    
+    <circle cx="450" cy="450" r="2.5" fill="url(#goldGradient)" opacity="0.2">
+      <animate attributeName="cy" values="450;430;450" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.2;0.6;0.2" dur="6s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+</svg>
+  </div>
+
+
+  <!-- Centered Sign In Container -->
+  <div class="signin-container">
     <h2>Login</h2>
-    <form action="/signin" method="POST">
-        <label for="email">User ID:</label>
-        <input type="email" id="email" name="email" required><br><br>
+    <form action="/signin" method="POST" class="signin-form">
+      <label for="email">User ID:</label>
+      <input type="email" id="email" name="email" required>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
 
-        <button type="submit">Sign In</button>
+      <button type="submit">Sign In</button>
     </form>
-
-    <p>Don't have an account? <a href="/registration">Sign Up</a></p>
+    <p style="margin-top: 10px; font-size: 15px;">
+      Don't have an account? <a href="/registration">Sign Up</a>
+    </p>
+  </div>
 </body>
 </html>
