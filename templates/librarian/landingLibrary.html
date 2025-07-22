@@ -84,7 +84,7 @@
                                 <i class="fas fa-times"></i> Reject
                             </button>
                         {% endif %}
-                    </div>
+                    </div> 
                 </div>
             </div>
             {% endfor %}
@@ -120,13 +120,17 @@
                     <select id="remarks_select_field{{ stud.sr_no }}" class="form_select_dropdown">
                         <option value="Form filled improperly">Form filled improperly</option>
                         <option value="Insufficient data">Insufficient data</option>
+                        <option value="Incorrect information">Incorrect information</option>
+                        <option value="Book not submitted">Book not submitted</option>
+                        <option value="Lost or Damaged Book">Lost or Damaged Book</option>
+                        <option value="Pending Clearance from Library">Pending Clearance from Library</option>
                         <option value="Others">Others</option>
                     </select>
                     <label class="form_label" for="custom_rejection_reason_input{{ stud.sr_no }}">Rejection Reason</label>
-                    <textarea id="custom_rejection_reason_input{{ stud.sr_no }}" class="form_textarea_input" placeholder="Enter reason here..."></textarea>
-                    <button class="btn btn-danger" id="modal_reject_button{{ stud.sr_no }}">
+                    <textarea id="custom_rejection_reason_input{{ stud.sr_no }}" class="form_textarea_input" placeholder="Enter reason here...(In case of financial discrepancies, specify the exact due amount.)"></textarea>
+                    <button class="btn btn-danger call-button-libRejected" data-email="{{ stud.user_id }}" data-name="{{ stud.name }}" id="modal_reject_button{{ stud.sr_no }}">
                         <i class="fas fa-times"></i> Reject
-                    </button>
+                    </button> 
                 </div>
             </div>
         </div>

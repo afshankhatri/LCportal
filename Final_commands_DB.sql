@@ -21,6 +21,16 @@ CREATE TABLE lc_generator (
     PRIMARY KEY (sr_no)
 );
 
+-- create table for verifierClerk
+CREATE TABLE verifierClerk (
+    sr_no INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    name VARCHAR(250) NOT NULL,
+    verifierClerk_id VARCHAR(120),
+    verified_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
 DELIMITER //
 
 CREATE TRIGGER after_user_insert_lc_generator
@@ -114,6 +124,42 @@ BEGIN
     IF NEW.user_type = 3 THEN
         INSERT INTO librarian (id_lib,name)
         VALUES (NEW.email,NEW.name);
+    END IF;
+END;
+
+//
+DELIMITER ;
+
+
+-- clerk verifier  
+DELIMITER //
+
+CREATE TRIGGER after_user_insert_clerkVerifier
+AFTER INSERT ON user
+FOR EACH ROW
+BEGIN
+    IF NEW.user_type = 6 THEN
+        INSERT INTO verifierclerk (verifierClerk_id,name)
+        VALUES (NEW.email,NEW.name);
+    END IF;
+END;
+
+//
+DELIMITER ;
+
+-- for updating isVerified in students table 
+DROP TRIGGER IF EXISTS after_user_updates_isVerified;
+
+DELIMITER //
+
+CREATE TRIGGER after_user_updates_isVerified
+AFTER update ON user
+FOR EACH ROW
+BEGIN
+    IF old.isVerified != isVerified  THEN
+        UPDATE student
+        SET isVerified = NEW.isVerified
+        WHERE student.user_id = NEW.email;
     END IF;
 END;
 

@@ -38,30 +38,48 @@ function setApproval(studentId) {
   document.getElementById("modal_reject_button" + srNo).onclick = function() {
     const lib_remarks = document.getElementById("remarks_select_field" + srNo).value;
     const lib_rejection_reason = document.getElementById("custom_rejection_reason_input" + srNo).value;
+    const studentEmail = document.querySelector("#modal_reject_button" + srNo).getAttribute("data-email");
 
     if (!currentStudentId) {
-      alert("No student selected!");
-      return;
+        alert("No student selected!");
+        return;
     }
 
+    // Step 1: Update rejection in DB
     fetch('/updateRejectionOflib', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        student_id: currentStudentId,
-        lib_remarks: lib_remarks,
-        lib_rejection_reason: lib_rejection_reason
-      })
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            student_id: currentStudentId,
+            lib_remarks: lib_remarks,
+            lib_rejection_reason: lib_rejection_reason
+        })
     })
     .then(response => response.json())
     .then(data => {
-      console.log('Success:', data.message);
-      window.location.reload();
+        console.log('Rejection updated:', data.message);
+
+        // Step 2: Send rejection email
+        return fetch('/libRejected', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({ email: studentEmail })
+        });
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Email sent:', data.message);
+        alert("Rejection processed and email sent.");
+        window.location.reload();
     })
     .catch(error => {
-      console.error('Error:', error);
+        console.error('Error during rejection or email:', error);
+        alert('Something went wrong while processing the rejection.');
     });
   };
 }
@@ -143,6 +161,11 @@ window.onclick = function(event) {
     }
 }
 
+
+function getCSRFToken() {
+    const cookie = document.cookie.match('(^|;)\\s*csrf_token\\s*=\\s*([^;]+)');
+    return cookie ? cookie.pop() : '';
+}
 
 // now i want it to work in such a way that as soon as i click on approve it should get approved ... at the same time it should get hidden from the hod landing page and get displayed in the accepted forms section ........... or ele what we can do is display all the forms accepted and rejected both... after getting accepted or rejected on landing page it should get colored red for reject and green for accept and white means no operation performed ... also they should also be visible in theri respective pages as well... i.e > in accepted and rejected section 
 // or

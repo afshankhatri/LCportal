@@ -34,6 +34,8 @@
                 <th>Approval From Accounts</th>
                 <th>Approval From Lib</th>
                 <th>LC generated</th>
+                <th>Force Approve</th>
+                <!-- <th>Force Reject</th> -->
             </tr>
         </thead>
         <tbody>
@@ -96,13 +98,19 @@
                 {% else  %}
                     <td> Yes </td>
                 {% endif %}
-            
 
-
-
+                <!-- force Approve -->
+                {% if stud.isVerified==1 and (stud.lib_approval_status != 1 or stud.hod_approval_status != 1 or stud.acc_approval_status != 1) %}
+                    <td>
+                        <button onclick="setApproval('{{ stud.user_id }}')">Force Approve</button>
+                    </td>    
+                {% else %}
+                    <td> Approved </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>
     </table>
+ <script src="/static/js/admin/student.js"></script>
 </body>
 </html>

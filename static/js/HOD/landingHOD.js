@@ -15,61 +15,10 @@ function setApproval(studentId) {
     .catch((error) => {
         console.error('Error:', error);
     });
-}  
+}   
 
-// for rejection of form
-        // function setRejection(studentId) {
-        //     const hod_rejection_reason = document.getElementById("custom_rejection_reason_input").value;
-        //     const hod_remarks = document.getElementById("remarks_select_field").value;
-        //     console.log(hod_rejection_reason,hod_remarks)
-        //     fetch('/updateRejectionOfHOD', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json'  // Important!
-        //         },
-        //         body: JSON.stringify({ 
-        //             student_id: studentId,
-        //             hod_remarks:hod_remarks,
-        //             hod_rejection_reason:hod_rejection_reason
-        //         })  // sending student ID to backend
-        //     })
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         console.log('Success:', data.message);
-        //         // You can also update UI here if needed
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error:', error);
-        //     });
-        // }
-
-        // // open closing model of rejection
-        // const rejectModalTriggerBtn = document.getElementById('trigger_reject_modal_button');
-        // const modalOverlay = document.getElementById('modal_overlay');
-        // const closeModalBtn = document.getElementById('close_modal_icon');
-
-        // // Open modal
-        // rejectModalTriggerBtn.onclick = () => {
-        // modalOverlay.style.display = 'block';
-        // };
-
-        // // Close modal on close icon click
-        // closeModalBtn.onclick = () => {
-        // modalOverlay.style.display = 'none';
-        // };
-
-        // // Close modal on outside click
-        // window.onclick = function(event) {
-        // if (event.target === modalOverlay) {
-        //     modalOverlay.style.display = 'none';
-        //     }
-        // };
-
-
-
-    // 2nd type of rejection
     // Store current student being rejected
-    function openRejectModal(srNo) {
+function openRejectModal(srNo) {
   currentStudentId = srNo;
   document.getElementById("modal_overlay" + srNo).style.display = "block";
 
@@ -85,65 +34,70 @@ function setApproval(studentId) {
     }
   };
 
+
+
+//   {{{}}} here
   // Finally, attach the Reject button handler here:
   document.getElementById("modal_reject_button" + srNo).onclick = function() {
     const hod_remarks = document.getElementById("remarks_select_field" + srNo).value;
     const hod_rejection_reason = document.getElementById("custom_rejection_reason_input" + srNo).value;
+    const studentEmail = document.querySelector("#modal_reject_button" + srNo).getAttribute("data-email");
 
     if (!currentStudentId) {
-      alert("No student selected!");
-      return;
+        alert("No student selected!");
+        return;
     }
 
+    // Step 1: Update rejection in DB
     fetch('/updateRejectionOfHOD', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        student_id: currentStudentId,
-        hod_remarks: hod_remarks,
-        hod_rejection_reason: hod_rejection_reason
-      })
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            student_id: currentStudentId,
+            hod_remarks: hod_remarks,
+            hod_rejection_reason: hod_rejection_reason
+        })
     })
     .then(response => response.json())
     .then(data => {
-      console.log('Success:', data.message);
-      window.location.reload();
+        console.log('Rejection updated:', data.message);
+
+        // Step 2: Send rejection email
+        return fetch('/hodRejected', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({ email: studentEmail })
+        });
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Email sent:', data.message);
+        alert("Rejection processed and email sent.");
+        window.location.reload();
     })
     .catch(error => {
-      console.error('Error:', error);
+        console.error('Error during rejection or email:', error);
+        alert('Something went wrong while processing the rejection.');
     });
   };
+
+//   {{{}}}
+
+
 }
 
 
-
-
-
-
-
-// for viewing the user info
-// function openModal(courseName, userId, branch, GR_no, srNo) {
-//     // Populate modal content with the student's data
-//     document.getElementById("modalName").innerText = courseName;
-//     document.getElementById("modalEmail").innerText = userId;
-//     document.getElementById("modalBranch").innerText = branch;  
-//     document.getElementById("modalGRNo").innerText = GR_no; 
-    
-//     //Update the Approve button with the correct student ID
-//     const approveBtn = document.getElementById("modalApproveBtn" );
-//     approveBtn.setAttribute("onclick", `setApproval('${srNo}')`);
-    
-//     // Show the modal
-//     document.getElementById("userModal").style.display = "flex";
-// }
-
 // bugg solving of view-details
-function openModal(courseName, userId, branch, GR_no, srNo, hodStatus) {
+function openModal(name, userId, branch, GR_no, srNo, hodStatus, libStatus, accStatus, libRemarks, libRejectionReason, accRemarks, accRejectionReason) {  // woring on creating the table for acc and lib status
     // Fill in text fields
-    document.getElementById("modalName").innerText = courseName;
+    document.getElementById("modalName").innerText = name;
     document.getElementById("modalEmail").innerText = userId;
+    console.log(name, userId, branch, GR_no, srNo, hodStatus, libStatus, accStatus, libRemarks, libRejectionReason, accRemarks, accRejectionReason);
 
     // document.getElementById("modalBranch").innerText = branch;
     if (branch == 0) {
@@ -169,21 +123,59 @@ function openModal(courseName, userId, branch, GR_no, srNo, hodStatus) {
     const approveBtn = document.getElementById("modalApproveBtn");
     const rejectBtn = document.getElementById("modalRejectBtn");
 
-    if (hodStatus === "1") {
-        approveBtn.innerText = "Approved";
-        approveBtn.disabled = true;
-        rejectBtn.innerText = "Reject";
-        rejectBtn.disabled = false;
-    } else if (hodStatus === "2") {
-        approveBtn.innerText = "Approve";
-        approveBtn.disabled = false;
-        rejectBtn.innerText = "Rejected";
-        rejectBtn.disabled = true;
+    if (libStatus === "1" && accStatus === "1") {
+        // lib and acc both approved, handle based on hodStatus
+        if (hodStatus === "1") {
+            approveBtn.innerText = "Approved";
+            approveBtn.disabled = true;
+
+            rejectBtn.innerText = "Reject";
+            rejectBtn.disabled = false;
+        } else if (hodStatus === "2") {
+            approveBtn.innerText = "Approve";
+            approveBtn.disabled = false;
+
+            rejectBtn.innerText = "Rejected";
+            rejectBtn.disabled = true;
+        } else {
+            approveBtn.innerText = "Approve";
+            approveBtn.disabled = false;
+
+            rejectBtn.innerText = "Reject";
+            rejectBtn.disabled = false;
+        }
     } else {
+        // lib or acc is pending or rejected
         approveBtn.innerText = "Approve";
-        approveBtn.disabled = false;
+        approveBtn.disabled = true;
+
         rejectBtn.innerText = "Reject";
-        rejectBtn.disabled = false;
+        rejectBtn.disabled = true;
+    }
+
+    // Librarian status logic
+    const libCell = document.getElementById("libStatusCell");
+    console.log(libCell)
+    if (libStatus == "0") {
+        libCell.innerText = "Pending";
+    } else if (libStatus == "1") {
+        libCell.innerText = "Approved";
+    } else if (libStatus == "2") {
+        libCell.innerHTML = `<strong>Remarks:</strong> ${libRemarks || "None"}<br><strong>Reason:</strong> ${libRejectionReason || "None"}`;
+    } else { 
+        libCell.innerText = "Unknown";
+    }
+
+    // Accountant status logic
+    const accCell = document.getElementById("accStatusCell");
+    if (accStatus == 0) {
+        accCell.innerText = "Pending";
+    } else if (accStatus == 1) {
+        accCell.innerText = "Approved";
+    } else if (accStatus == 2) {
+        accCell.innerHTML = `<strong>Remarks:</strong> ${accRemarks || "None"}<br><strong>Reason:</strong> ${accRejectionReason || "None"}`;
+    } else {
+        accCell.innerText = "Unknown";
     }
 
     // Update Approve button click handler
@@ -198,7 +190,7 @@ function openModal(courseName, userId, branch, GR_no, srNo, hodStatus) {
     };
 
     document.getElementById("userModal").style.display = "flex";
-}
+}           
     
 function closeModal() {
     document.getElementById("userModal" ).style.display = "none";
@@ -212,6 +204,44 @@ window.onclick = function(event) {
     }
 }
 
+
+
+// document.addEventListener('DOMContentLoaded', () => {
+//     document.querySelectorAll('.call-button-hodReject').forEach(button => {
+//         button.addEventListener('click', () => {
+//             const studentEmail = button.getAttribute('data-email');
+
+//             // button.disabled = true;
+
+//             fetch('/hodRejected', {
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/json',
+//                     'X-CSRFToken': getCSRFToken()
+//                 },
+//                 body: JSON.stringify({
+//                     email: studentEmail,
+//                 })
+//             })
+//                 .then(response => response.json())
+//                 .then(data => {
+//                     alert(data.message);
+//                     location.reload();
+//                 })
+//                 .catch(error => {
+//                     console.error('Error:', error);
+//                     alert('Error sending email.');
+//                     button.disabled = false;
+//                 });
+//         });
+//     });
+// });
+
+// CSRF helper (if you have CSRF protection)
+function getCSRFToken() {
+    const cookie = document.cookie.match('(^|;)\\s*csrf_token\\s*=\\s*([^;]+)');
+    return cookie ? cookie.pop() : '';
+}
 
 // now i want it to work in such a way that as soon as i click on approve it should get approved ... at the same time it should get hidden from the hod landing page and get displayed in the accepted forms section ........... or ele what we can do is display all the forms accepted and rejected both... after getting accepted or rejected on landing page it should get colored red for reject and green for accept and white means no operation performed ... also they should also be visible in theri respective pages as well... i.e > in accepted and rejected section 
 // or

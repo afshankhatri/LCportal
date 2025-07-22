@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <link rel="stylesheet" href="/static/css/verify.css"> -->
+</head>
+<body>
+
+
+
+    <h1>this is for verify the students wether they are actually form the college or just a fake entry</h1>
+
+    <a href="/VerifiedRejected" >Rejected Students</a>
+    <br><br>
+    <a href="/VerifiedAccepted" >Accepted Students</a>
+
+    {% for stud in studentDetails %}
+    <div class="card">
+        <h2>Student Details</h2>
+            <p><strong>Name:</strong> {{ stud.name }}</p>
+            <p><strong>Email:</strong> {{ stud.user_id }}</p>
+            <p><strong>Dept:</strong> {{ stud.courseName }}</p>
+            <button class="call-button-accept" data-email="{{ stud.user_id }}" data-name="{{ stud.name }}" onclick="this.disabled = true; setApproval('{{ stud.sr_no }}')">Accept</button>
+            <button class="call-button-reject" data-email="{{ stud.user_id }}" data-name="{{ stud.name }}" onclick="this.disabled = true; setRejection('{{ stud.sr_no }}')">Reject</button>
+        </div>
+    {% endfor %} 
+
+    <script src="/static/js/verifierClerk/landingVerifier.js"></script>
+</body>
+</html>

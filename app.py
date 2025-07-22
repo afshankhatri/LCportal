@@ -8,6 +8,9 @@ import smtplib
 from email.mime.text import MIMEText
 from flask import Flask
 from flask_mail import Mail, Message
+from markupsafe import Markup, escape
+
+
 
 pymysql.install_as_MySQLdb()
 
@@ -30,8 +33,9 @@ class User(db.Model): # .......    user here is the name of the table  ..  given
     phone_no = db.Column(db.String(255), nullable=False)
     dept = db.Column(db.Integer, nullable=False)
     date_created = db.Column(db.DateTime, default = datetime.utcnow)   # ... to get DateTime we need to import a file called (from datetime import datetime)
+    isVerified = db.Column(db.Integer, default=0)
     def __repr__(self) :
-        return f"{self.name, self.email, self.password, self.user_type, self.phone_no, self.dept}"
+        return f"{self.name, self.email, self.password, self.user_type, self.phone_no, self.dept,self.isVerified}"
 
 
 # students
@@ -62,13 +66,15 @@ class Student(db.Model):
     lib_remarks = db.Column(db.Text, nullable=True)
     lib_rejection_reason = db.Column(db.String(255), nullable=True)
     LCgenerated = db.Column(db.Integer, nullable=True, default=0)
+    isVerified = db.Column(db.Integer, default=0)
+    appKey = db.Column(db.String(100), nullable=True)
 
 
     # Relationship with User table
     user = db.relationship('User', backref=db.backref('students', lazy=True))  # Establishing relationship
 
     def __repr__(self):
-        return f"{ self.sr_no, self.user_id , self.GR_no , self.yearOfJoin , self.courseName , self.reasonOfLeaving , self.PRN , self.UPRN , self.isSubmitted , self.semester , self.lastLogin , self.finalYearMarksheet , self.declaration }"
+        return f"{ self.sr_no, self.user_id , self.GR_no , self.yearOfJoin , self.courseName , self.reasonOfLeaving , self.PRN , self.UPRN , self.isSubmitted , self.semester , self.lastLogin , self.finalYearMarksheet , self.declaration,self.appKey }"
     
     
 class HOD(db.Model):
@@ -88,11 +94,12 @@ class HOD(db.Model):
     # date_of_joining = db.Column(db.DateTime, nullable=True)  # Date of joining
     # contact_number = db.Column(db.String(15), nullable=True)  # Contact number
     # designation = db.Column(db.String(255), nullable=True)  # HOD Designation
+    appKey = db.Column(db.String(100), nullable=True)
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())  # Last updated timestamp
     
 
     def __repr__(self):
-        return f"{ self.id_hod , self.name , self.emp_id , self.dept , self.remarks , self.misconduct_flag , self.achievements_flag , self.rejection_reason , self.approval_status , self.last_verification_date  }"
+        return f"{ self.id_hod , self.name , self.emp_id , self.dept , self.remarks , self.misconduct_flag , self.achievements_flag , self.rejection_reason , self.approval_status , self.last_verification_date ,self.appKey }"
     
 class Accounts(db.Model):
     __tablename__ = 'accounts'  # You can change this if your actual table name differs
@@ -107,10 +114,11 @@ class Accounts(db.Model):
     # fees_paid = db.Column(db.Numeric(10, 2))
     # pending_fees = db.Column(db.Numeric(10, 2))
     # fine_amount = db.Column(db.Numeric(10, 2))
+    appKey = db.Column(db.String(100), nullable=True)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return f"{self.id_acc, self.emp_id, self.last_verification_date, self.updated_at}"
+        return f"{self.id_acc, self.emp_id, self.last_verification_date, self.updated_at,self.appKey}"
 
 class Library(db.Model):
     __tablename__ = 'librarian'  # Change if your actual table name is different
@@ -126,10 +134,11 @@ class Library(db.Model):
     # library_fine_amount = db.Column(db.Numeric(10, 2), nullable=True)
     # book_return_status = db.Column(db.Integer, nullable=True)
     # fine_payment_status = db.Column(db.Integer, nullable=True)
+    appKey = db.Column(db.String(100), nullable=True)
     updated_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
 
     def __repr__(self):
-        return f"{self.id_lib,self.emp_id,self.updated_at}"    
+        return f"{self.id_lib,self.emp_id,self.updated_at,self.appKey}"    
     
 class LC_Generator(db.Model):
     __tablename__ = 'lc_generator'
@@ -138,11 +147,23 @@ class LC_Generator(db.Model):
     name = db.Column(db.String(250), nullable=False)
     lc_id = db.Column(db.String(120), nullable=True, index=True)      # MUL = Multiple Index
     isGenerated = db.Column(db.Integer, default=0)
+    appKey = db.Column(db.String(100), nullable=True)
     generated_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
 
     def __repr__(self):
-        return f"{self.lc_id, self.name, self.generated_at}"
+        return f"{self.lc_id, self.name, self.generated_at,self.appKey}"
     
+class approverClerk(db.Model):
+    __tablename__ = 'verifierClerk'
+
+    sr_no = db.Column(db.Integer, primary_key=True, nullable=False)
+    name = db.Column(db.String(250), nullable=False)
+    verifierClerk_id = db.Column(db.String(120), nullable=True, index=True)  # Index for fast lookup
+    verified_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
+    appKey = db.Column(db.String(100), nullable=True)
+
+    def __repr__(self):
+        return f"<{self.name, self.verifierClerk_id, self.verified_at,self.appKey}>"
 
 
 # ------------------------------- FUNCTION DEFINATIONS -------------------------------
@@ -193,6 +214,8 @@ def signin():
                 return redirect(url_for("accountslanding"))
             elif user.user_type == 5:
                 return redirect(url_for("lCgeneratorlanding"))
+            elif user.user_type == 6:
+                return redirect(url_for("verifierClerk"))
         else:
             return "Invalid credentials", 401
         # if user.user_type == 0:
@@ -276,6 +299,12 @@ def studentapply():
                 application.semester = semester
                 application.declaration = declaration
                 application.isSubmitted = isSubmitted
+                if application.hod_approval_status == 2 :
+                    application.hod_approval_status = 0
+                if application.lib_approval_status == 2 :
+                    application.lib_approval_status = 0
+                if application.acc_approval_status == 2:
+                    application.acc_approval_status = 0
             else:
                 return "Student record not found!", 404  # If no record exists, return error
 
@@ -284,6 +313,28 @@ def studentapply():
         return render_template("students/applicationForm.html")
     else:
         return redirect(url_for('err'))
+    
+    
+@app.route("/forceApprove", methods=['POST'])
+def forceApprove():
+    data = request.get_json()
+    student_id = data.get('student_id')
+
+    studentDetails = Student.query.filter_by(user_id=student_id).first()
+
+    if studentDetails:
+        studentDetails.acc_approval_status = 1
+        studentDetails.lib_approval_status = 1
+        studentDetails.hod_approval_status = 1
+        studentDetails.LCgenerated = 1
+        
+        db.session.add(studentDetails)
+        db.session.commit()
+        return jsonify({"message": "Student force-approved."}), 200
+    else:
+        return jsonify({"message": "Student not found."}), 404
+
+        
 
 
 
@@ -504,6 +555,41 @@ def lCgeneratorlanding():
     
 
 
+@app.route("/VerifyStudents")
+def verifierClerk():
+    if session.get("user_email") and session.get("user_type") == 6:
+        
+        print( f"Welcome, {session['user_email']} (YOu are an: {session['user_type']})")
+        studentDetails = Student.query.filter_by(isVerified = 0).all()
+
+        return render_template("verifierClerk/verifyLanding.html",studentDetails = studentDetails)
+    else:
+        return redirect(url_for('err'))
+
+@app.route("/VerifiedAccepted")
+def verifierAccepted():
+    if session.get("user_email") and session.get("user_type") == 6:
+        
+        print( f"Welcome, {session['user_email']} (YOu are an: {session['user_type']})")
+        studentDetails = Student.query.filter_by(isVerified = 1).all()
+        
+        return render_template("verifierClerk/verifiedAccepted.html",studentDetails = studentDetails)
+    else:
+        return redirect(url_for('err'))
+    
+@app.route("/VerifiedRejected")
+def verifierRejected():
+    if session.get("user_email") and session.get("user_type") == 6:
+        
+        print( f"Welcome, {session['user_email']} (YOu are an: {session['user_type']})")
+        studentDetails = Student.query.filter_by(isVerified = 2).all()
+        
+        return render_template("verifierClerk/verifiedRejected.html",studentDetails = studentDetails)
+    else:
+        return redirect(url_for('err'))
+    
+
+
 # -----------------------------------------------Routes---------------------------------------------------------------------
 @app.route('/updateApprovalofHOD', methods=['POST'])
 def updateApprovalofHOD():
@@ -663,20 +749,64 @@ def updateRejectionOfacc():
         print("Student not found!")
         return ({"message": "Student not found"}), 404
     
+
+@app.route('/updateApprovalofVerifierClerk', methods=['POST'])
+def updateApprovalofVerifierClerk():
+    data = request.get_json()  # get the JSON data sent by JS
+    student_id = data.get('student_id')
+
+    stud = Student.query.filter_by(sr_no=student_id).first()
     
-# email send by lcGenerator after overall process
-@app.route('/send_email', methods=['POST'])
-def send_email():
+    if stud:
+        stud.isVerified = 1  
+        
+        print(stud.isVerified)
+        db.session.add(stud)
+        db.session.commit()
+        
+        print("Approval status updated successfully!")        
+        return ({"message": "Approval updated successfully"}), 200
+
+    else:
+        print("Student not found!")
+
+@app.route('/updateRejectionofVerifierClerk', methods=['POST'])
+def updateRejectionofVerifierClerk():
+    data = request.get_json()  # get the JSON data sent by JS
+    student_id = data.get('student_id')
+
+    stud = Student.query.filter_by(sr_no=student_id).first()
+    
+    if stud:
+        stud.isVerified = 2
+        
+        print(stud.isVerified)
+        db.session.add(stud)
+        db.session.commit()
+        
+        print("Approval status updated successfully!Student has been removed form the data")
+        
+        return ({"message": "Rejected successfully"}), 200
+    else:
+        print("Student not found!")
+
+    
+    
+    
+    
+# email send by lcGenerator for collection after overall approval and generation process
+@app.route('/send_email_for_collection', methods=['POST'])
+def send_email_for_collection():
     data = request.get_json()
     recipient_email = data.get('email')
 
     subject = "Document Ready for Collection"
     body = f"Dear student,\n\nYour document is ready. Please collect it from the office.\n\nRegards,\nAdministration"
 
-    sender_email = "arshkhn2000@gmail.com"
+    sender_email = "arshkhn2000@gmail.com"  # take email and appKey from the session
     sender_password = "gwld homk xmdy vdcb"
     
-
+ 
         
     # SMTP setup (example for Gmail)
     try:
@@ -699,8 +829,215 @@ def send_email():
         return jsonify({'message': 'Email sent successfully.'})
     except Exception as e:
         print('Error sending email:', e)
-        return jsonify({'message': 'Error sending email.'}), 500
+        return jsonify({'message': 'Error sending email.'}), 500    
+            
+            
+            
 
+@app.route('/RegistrationAcceptance', methods=['POST'])
+def RegistrationAcceptance():
+    data = request.get_json()
+    recipient_email = data.get('email')
+
+    subject = "Eligible for Living Certificate Application"
+    body = f"Dear student,\n\nYou are now verified. You may proceed to apply for the LC to initiate its generation. \n\nRegards,\nAdministration"
+
+    sender_email = "arshkhn2000@gmail.com"  # take email and appKey from the session
+    sender_password = "gwld homk xmdy vdcb"
+    
+ 
+        
+    # SMTP setup (example for Gmail)
+    try:
+        msg = MIMEText(body)
+        msg['Subject'] = subject
+        msg['From'] = sender_email
+        msg['To'] = recipient_email
+ 
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, [recipient_email], msg.as_string())
+        server.quit()
+        
+        # student = Student.query.filter_by(user_id=recipient_email).first()
+        # print(student)
+        # if student:
+        #     student.LCgenerated = 1
+        #     db.session.commit()
+
+        return jsonify({'message': 'Email for approval of registration sent successfully.'})
+    except Exception as e:
+        print('Error sending email:', e)
+        return jsonify({'message': 'Error sending email.'}), 500    
+            
+            
+
+
+@app.route('/RegistrationRejection', methods=['POST'])
+def RegistrationRejection():
+    data = request.get_json()
+    recipient_email = data.get('email')
+
+    subject = "Alert: False Entry Detected on LC portal"
+    body = f"Dear Applicant,\nA discrepancy has been detected in the information you submitted. If you believe this is an error, report to the college office immediately for verification.\nFailure to respond promptly may lead to a delay or denial in the issuance of your Leaving Certificate.\n\nRegards,\nAdministration"
+
+    sender_email = "arshkhn2000@gmail.com"  # take email and appKey from the session
+    sender_password = "gwld homk xmdy vdcb"
+    
+ 
+        
+    # SMTP setup (example for Gmail)
+    try:
+        msg = MIMEText(body)
+        msg['Subject'] = subject
+        msg['From'] = sender_email
+        msg['To'] = recipient_email
+ 
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, [recipient_email], msg.as_string())
+        server.quit()
+
+        return jsonify({'message': 'Email for rejection of registration sent successfully.'})
+    except Exception as e:
+        print('Error sending email:', e)
+        return jsonify({'message': 'Error sending email.'}), 500  
+
+
+
+@app.route('/hodRejected', methods=['POST'])
+def hodRejected():
+    data = request.get_json()
+    recipient_email = data.get('email')
+
+    subject = "Application Rejected from HOD"
+    body = f"Dear Student,\n It has been noticed that there are few issues in subbmission of your form ,plz visit the portal and reapply.\n\nRegards,\nHead Of Department"
+
+    sender_email = "arshkhn2000@gmail.com"  # take email and appKey from the session
+    sender_password = "gwld homk xmdy vdcb"
+    
+    # SMTP setup (example for Gmail)
+    try:
+        msg = MIMEText(body)
+        msg['Subject'] = subject
+        msg['From'] = sender_email
+        msg['To'] = recipient_email
+ 
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, [recipient_email], msg.as_string())
+        server.quit()
+
+        return jsonify({'message': 'Email from HOD sent.'})
+    except Exception as e:
+        print('Error sending email:', e)
+        return jsonify({'message': 'Error sending email.'}), 500  
+    
+
+# rejection mail from library
+@app.route('/libRejected', methods=['POST'])
+def libRejected():
+    data = request.get_json()
+    recipient_email = data.get('email')
+
+    subject = "Application Rejected from Librarian"
+    body = f"Dear Student,\n It has been noticed that there are few issues in subbmission of your form ,plz visit the portal and reapply.\n\nRegards,\nHead Of Department"
+
+    sender_email = "arshkhn2000@gmail.com"  # take email and appKey from the session
+    sender_password = "gwld homk xmdy vdcb"
+    
+    # SMTP setup (example for Gmail)
+    try:
+        msg = MIMEText(body)
+        msg['Subject'] = subject
+        msg['From'] = sender_email
+        msg['To'] = recipient_email
+ 
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, [recipient_email], msg.as_string())
+        server.quit()
+
+        return jsonify({'message': 'Email from Lib sent.'})
+    except Exception as e:
+        print('Error sending email:', e)
+        return jsonify({'message': 'Error sending email.'}), 500 
+
+
+
+# rejection mail form accounts
+
+@app.route('/accRejected', methods=['POST'])
+def accRejected():
+    data = request.get_json()
+    recipient_email = data.get('email')
+
+    subject = "Application Rejected from Accounts Dept"
+    body = f"Dear Student,\n It has been noticed that there are few issues in subbmission of your form ,plz visit the portal and reapply.\n\nRegards,\nHead Of Department"
+
+    sender_email = "arshkhn2000@gmail.com"  # take email and appKey from the session
+    sender_password = "gwld homk xmdy vdcb"
+    
+    # SMTP setup (example for Gmail)
+    try: 
+        msg = MIMEText(body)
+        msg['Subject'] = subject
+        msg['From'] = sender_email
+        msg['To'] = recipient_email
+ 
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, [recipient_email], msg.as_string())
+        server.quit()
+
+        return jsonify({'message': 'Email from Acc sent.'})
+    except Exception as e:
+        print('Error sending email:', e)
+        return jsonify({'message': 'Error sending email.'}), 500 
+    
+    
+    
+@app.route('/ApplicationForLC', methods=['POST'])
+def ApplicationForLC():
+    data = request.get_json()
+    recipient_email = data.get('email')
+    name = data.get('name')
+    print(name)
+
+    subject = "Application For LC"
+    body = f"Dear Sir/madam,\n I have submitted my application form on the portal. Kindly review and verify it at your earliest convenience.\n\nRegards,\n{name}"
+
+    sender_email = "arshkhn2000@gmail.com"  # take email and appKey from the session
+    sender_password = "gwld homk xmdy vdcb"
+    
+    # SMTP setup (example for Gmail)
+    try: 
+        msg = MIMEText(body)
+        msg['Subject'] = subject
+        msg['From'] = sender_email
+        msg['To'] = recipient_email
+ 
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, [recipient_email], msg.as_string())
+        server.quit()
+
+        return jsonify({'message': 'Email from Acc sent.'})
+    except Exception as e:
+        print('Error sending email:', e)
+        return jsonify({'message': 'Error sending email.'}), 500 
+
+
+
+
+
+# escapejs can help us to safely include user-generated content... means if there is some special char in our word-len which might terminate our stirng ,it will make sure that the string does not get terminated and give a proper output   ... 
+def escapejs_filter(s):
+    if s is None:
+        return ''
+    return Markup(str(s).replace("\\", "\\\\").replace("'", "\\'").replace('"', '\\"').replace("\n", "\\n").replace("\r", "\\r"))
+
+app.jinja_env.filters['escapejs'] = escapejs_filter
 
 
 
@@ -716,3 +1053,13 @@ if __name__ == "__main__":
     # change the DB schmea for studts tabel and implement the above mentioned chanes
     
     # make the issue of accept and rejct proper ... the number 1 is getting printed but it is not getting dispalyed in the databse ,look into this issue 
+
+
+
+
+#     subjectRej = "Alert: False Entry Detected on LC portal"
+#     bodyRej = f"Dear student,\n\nOur system has detected a potential false entry in your submitted documents. Please report to the office immediately for clarification.\n\nRegards,\nAdministration"
+    
+#     subjectApp ="Congratulatioins: Account Approved on LC portal"
+#     bodyApp = f"Dear student,\n\nOur system has Approved your entry for your submitted details. Please visit the portal immediately to apply for LC on our portal.\n\nRegards,\nAdministration"
+

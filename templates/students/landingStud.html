@@ -24,20 +24,36 @@
         <div class="status-section">
             <div class="status-card">
                 <h3>Application Status</h3>
-                {% if application.isSubmitted == 0 or not application.isSubmitted %}
-                    <div class="status-icon icon-pending"><i class="fas fa-file-alt"></i></div>
-                    <div class="status-text">You have not submitted your leaving certificate application yet.</div>
+                {% if application.isVerified == 0  %}
+                    <!-- <div class="status-icon icon-review"><i class="fas fa-clipboard-check"></i></div> -->
+                    <div class="status-text">Your registration was successful. We are currently verifying your details. You will be notified once the verification is complete.</div>
+                
+                {% elif application.isVerified == 2  %}
+                    <div class="status-text">Your verification is complete. However, it was found that the credentials provided do not match our institutional records. If you believe this is an error, please contact the college administration for further assistance.</div>
+                
+                {% elif application.isVerified == 1 and (application.isSubmitted == 0 or not application.isSubmitted) %}
+                    <div class="status-icon icon-approved"><i class="fas fa-check-circle"></i></div>
+                    <div class="status-text">Your details have been verified successfully. You can now apply for your leaving certificate.</div>
                     <a id="apply" href="/apply" class="btn">Apply for Leaving Certificate</a>
+
+                <!-- {% elif application.isSubmitted == 0 or not application.isSubmitted %}
+                    <div class="status-icon icon-pending"><i class="fas fa-file-alt"></i></div>
+                    <div class="status-text">Your are now verified .Apply for LC for it to get generated sooner </div>
+                    <a id="apply" href="/apply" class="btn">Apply for Leaving Certificate</a> -->
+
                 {% elif application.isSubmitted == 1 and (application.acc_approval_status == 2 or application.lib_approval_status == 2 or application.hod_approval_status == 2) %}
                     <div class="status-icon icon-rejected"><i class="fas fa-times-circle"></i></div>
                     <div class="status-text">Your application has been rejected. Please check the rejection details below and reapply.</div>
                     <a href="/apply" class="btn">Re-Apply</a>
+                
                 {% elif application.isSubmitted == 1 and (application.acc_approval_status != 1 or application.lib_approval_status != 1 or application.hod_approval_status != 1) %}
                     <div class="status-icon icon-processing"><i class="fas fa-spinner"></i></div>
                     <div class="status-text">Your application is under scrutiny. Please wait for the approval from all departments.</div>
+
                 {% elif application.isSubmitted == 1 and (application.acc_approval_status == 1 and application.lib_approval_status == 1 and application.hod_approval_status == 1) %}
                     <div class="status-icon icon-processing"><i class="fas fa-spinner"></i></div>
                     <div class="status-text">All approvals received! Your leaving certificate is being processed.</div>
+
                 {% elif application.LCgenerated == 1 %}
                     <div class="status-icon icon-ready"><i class="fas fa-check-circle"></i></div>
                     <div class="status-text">Your leaving certificate is ready for collection. Please visit the office to collect your document.</div>

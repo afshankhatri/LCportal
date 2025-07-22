@@ -37,35 +37,53 @@ function openRejectModal(srNo) {
     };
 
     // Finally, attach the Reject button handler here:
-    document.getElementById("modal_reject_button" + srNo).onclick = function () {
-        const acc_remarks = document.getElementById("remarks_select_field" + srNo).value;
-        const acc_rejection_reason = document.getElementById("custom_rejection_reason_input" + srNo).value;
+    document.getElementById("modal_reject_button" + srNo).onclick = function() {
+    const acc_remarks = document.getElementById("remarks_select_field" + srNo).value;
+    const acc_rejection_reason = document.getElementById("custom_rejection_reason_input" + srNo).value;
+    const studentEmail = document.querySelector("#modal_reject_button" + srNo).getAttribute("data-email");
 
-        if (!currentStudentId) {
-            alert("No student selected!");
-            return;
-        }
+    if (!currentStudentId) {
+        alert("No student selected!");
+        return;
+    }
 
-        fetch('/updateRejectionOfacc', {
+    // Step 1: Update rejection in DB
+    fetch('/updateRejectionOfacc', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            student_id: currentStudentId,
+            acc_remarks: acc_remarks,
+            acc_rejection_reason: acc_rejection_reason
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Rejection updated:', data.message);
+
+        // Step 2: Send rejection email
+        return fetch('/accRejected', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
             },
-            body: JSON.stringify({
-                student_id: currentStudentId,
-                acc_remarks: acc_remarks,
-                acc_rejection_reason: acc_rejection_reason
-            })
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data.message);
-                window.location.reload();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-    };
+            body: JSON.stringify({ email: studentEmail })
+        });
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Email sent:', data.message);
+        alert("Rejection processed and email sent.");
+        window.location.reload();
+    })
+    .catch(error => {
+        console.error('Error during rejection or email:', error);
+        alert('Something went wrong while processing the rejection.');
+    });
+  };
 }
 
 
@@ -145,3 +163,8 @@ window.onclick = function (event) {
     }
 }
 
+
+function getCSRFToken() {
+    const cookie = document.cookie.match('(^|;)\\s*csrf_token\\s*=\\s*([^;]+)');
+    return cookie ? cookie.pop() : '';
+}

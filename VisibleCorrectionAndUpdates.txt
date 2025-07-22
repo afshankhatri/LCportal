@@ -18,3 +18,49 @@ also if the formis rejected then the interface for the student to make the neces
 make the re-apply button working (it is just added on the interface ,not functional)...
 for re-apply ask the teacher what the students needs to do if rejected for each particular authority ... if rejected by hod then what similarly for acc and lib
 
+
+0 {in verifierClerk interface make the approve reject(soft delete) button} DONE
+1 { only the approved students will be allowed to do further actioins like apply for lc  } DONE
+
+2 { if rejected then the user should get a mail that he has been rejected ... if he is actuall a geneuine person then he/she    contact and can get approved } DONE
+
+3 { 
+    approval and rejectioin interface where clerk can accept or reject again ,if by-mistakenly he app/rej any student.  DONE
+
+    after approval the student should get a mail that plz fill the application form and proceed further . Done
+
+    As soon as he register's in the web & then he sign'in then he shud get a disp just like normal but the apply btn shud be disable it shud get activated if clerk approves it. DONE
+
+    If clerk rejects the user then he should get some other error page that you have been rejected or contact College for more details  DONE
+}
+
+4 { in lib,hod,acc make changes in such a way that if user is verified and submitted ==1 then display in acc,hod,lib } DONE
+5 { the hod's approve/rej button will be disable untill the acc and lib is not approving the form  } DONE
+6 {  
+    hod's should get mail once the acc,lib has approved.    partially DONE
+
+    if rejected by any then the reason or rej should be displayed to the hod .    DONE
+}
+7 { student should get mail if he gets rejected by any of the athority } DONE
+8 { the admin should be able to access all the info of the DB he can also approve on behalf of the other teachers  } DONE
+9 { taking of app key of clerk lib,acc,hod,lc_gen }   majorly here
+10{ make the user email dynamic along with app key so that the mail goes to the user with proper/correct mail id }
+
+also,
+11{ 
+    if student is app/rej from any of the lib,acc,hod then he should be removed from the landing page and should go in their resp. interface of acc/rej 
+
+    if the user repapply's then the approval_status should get 1 from 0 and it shold be again visible to the person who rejected  DONE
+
+    the re-application should only be visible to the person who has rejected not all(hod,lib,acc)   DONE
+}
+
+12{ payment integration with accounts so that he/she can pay if any dues are left  }
+13{ change the reason of rejection in the html template for acc and lib according to the reason that are relvent to that dept. } DONE
+14 { in lc_gen interface when the email is sent ... the buttons message directly gets converted to collected ... it should be like ... email sent... and then if he actually collects it .... then it should show collected ... for that we need to create 1 more button at the top just like (pending collectioin | generated ) 3rd one should be (Collected).
+
+    mail should be sent to student that he has collectd the LC
+}
+
+
+there should be one common email id in the name of portal ,which will notify automatically to the hod ,user and other that this particular thing is done now proceed further .... cause ... in the situation where both lib and acc should approve then only the hod should be able to app/rej ... so what we can do is with that common mail id we can write a function in such a way that when lib and acc ==1 then send mail to hod ... similarly for application of student as soon as student applies it should send the mail from the portal that student has applied plz chk... or similar stuff

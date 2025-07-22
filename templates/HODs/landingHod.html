@@ -60,28 +60,73 @@
               </span>
             {% endif %}
           </div>
-
+ 
           <div class="button-group">
-            {% if stud.hod_approval_status == 1 %}
-              <button class="btn btn-primary" disabled>
-                <i class="fas fa-check"></i> Approved
+            {% if stud.lib_approval_status == 1 and stud.acc_approval_status == 1 %}
+              {# Both lib and acc approved, allow Approve/Reject logic based on hod status #}
+
+              {% if stud.hod_approval_status == 1 %}
+                <button class="btn btn-primary" disabled>
+                  <i class="fas fa-check"></i> Approved
+                </button>
+              {% else %}
+                <button class="btn btn-primary" onclick="this.disabled = true; setApproval('{{ stud.sr_no }}')">
+                  <i class="fas fa-check"></i> Approve
+                </button>
+              {% endif %}
+
+              <button class="btn btn-secondary"  
+                onclick="openModal(
+                  '{{ stud.name|escapejs }}',
+                  '{{ stud.user_id|escapejs }}',
+                  '{{ stud.courseName|escapejs }}',
+                  '{{ stud.GR_no|escapejs }}',
+                  '{{ stud.sr_no|escapejs }}',
+                  '{{ stud.hod_approval_status|escapejs }}',
+                  '{{ stud.lib_approval_status|escapejs }}',
+                  '{{ stud.acc_approval_status|escapejs }}',
+                  '{{ stud.lib_remarks|escapejs }}',
+                  '{{ stud.lib_rejection_reason|escapejs }}',
+                  '{{ stud.acc_remarks|escapejs }}',
+                  '{{ stud.acc_rejection_reason|escapejs }}')">
+                <i class="fas fa-eye"></i> View Details
               </button>
+
+              {% if stud.hod_approval_status == 2 %}
+                <button class="btn btn-danger" disabled>
+                  <i class="fas fa-times"></i> Rejected
+                </button>
+              {% else %}
+                <button class="btn btn-danger " onclick="openRejectModal('{{ stud.sr_no }}')">
+                  <i class="fas fa-times"></i> Reject
+                </button>
+              {% endif %}
+
             {% else %}
-              <button class="btn btn-primary" onclick="this.disabled = true; setApproval('{{ stud.sr_no }}')">
+              {# lib or acc not approved, disable Approve/Reject buttons #}
+
+              <button class="btn btn-primary" disabled>
                 <i class="fas fa-check"></i> Approve
               </button>
-            {% endif %}
 
-            <button class="btn btn-secondary" onclick="openModal('{{ stud.courseName }}', '{{ stud.user_id }}', '{{ stud.courseName }}', '{{ stud.GR_no }}', '{{ stud.sr_no }}')">
-              <i class="fas fa-eye"></i> View Details
-            </button>
-
-            {% if stud.hod_approval_status == 2 %}
-              <button class="btn btn-danger" disabled>
-                <i class="fas fa-times"></i> Rejected
+              <button class="btn btn-secondary"  
+                onclick="openModal(
+                  '{{ stud.name|escapejs }}',
+                  '{{ stud.user_id|escapejs }}',
+                  '{{ stud.courseName|escapejs }}',
+                  '{{ stud.GR_no|escapejs }}',
+                  '{{ stud.sr_no|escapejs }}',
+                  '{{ stud.hod_approval_status|escapejs }}',
+                  '{{ stud.lib_approval_status|escapejs }}',
+                  '{{ stud.acc_approval_status|escapejs }}',
+                  '{{ stud.lib_remarks|escapejs }}',
+                  '{{ stud.lib_rejection_reason|escapejs }}',
+                  '{{ stud.acc_remarks|escapejs }}',
+                  '{{ stud.acc_rejection_reason|escapejs }}')">
+                <i class="fas fa-eye"></i> View Details
               </button>
-            {% else %}
-              <button class="btn btn-danger" onclick="openRejectModal('{{ stud.sr_no }}')">
+
+              <button class="btn btn-danger" disabled>
                 <i class="fas fa-times"></i> Reject
               </button>
             {% endif %}
@@ -98,8 +143,30 @@
         <h3>Student Details</h3>
         <p><strong>Name:</strong> <span id="modalName"></span></p>
         <p><strong>Email:</strong> <span id="modalEmail"></span></p>
-        <p><strong>Branch:</strong> <span id="modalBranch"></span></p>
+        <p><strong>Branch:</strong> <span id="modalBranch"></span></p> 
         <p><strong>GR Number:</strong> <span id="modalGRNo"></span></p>
+
+
+        <h4>Status</h4>  
+        <!-- ye sab loop me nai uper jo JS file me fuction hai us me se call kar to sahi rahega  -->
+        
+
+        <table border="1" cellspacing="0" cellpadding="8">
+          <thead>
+            <tr>
+              <th colspan="2">Librarian</th>
+              <th colspan="2">Accountant</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="libStatusCell" colspan="2"></td>
+              <td id="accStatusCell" colspan="2"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        
         <br>
         <button class="btn btn-primary" id="modalApproveBtn">
           <i class="fas fa-check"></i> Approve
@@ -125,7 +192,7 @@
           </select>
           <label class="form_label" for="custom_rejection_reason_input{{ stud.sr_no }}">Rejection Reason</label>
           <textarea id="custom_rejection_reason_input{{ stud.sr_no }}" class="form_textarea_input" placeholder="Enter reason here..."></textarea>
-          <button class="btn btn-danger" id="modal_reject_button{{ stud.sr_no }}">
+          <button class="btn btn-danger call-button-hodReject" data-email="{{ stud.user_id }}" data-name="{{ stud.name }}" id="modal_reject_button{{ stud.sr_no }}">
             <i class="fas fa-times"></i> Reject
           </button>
         </div>

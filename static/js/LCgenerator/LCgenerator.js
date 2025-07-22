@@ -146,7 +146,7 @@ function initializeCallButtons() {
                     console.error('Error sending email:', error);
                 });
         });
-    });
+    }); 
 }
 
 // afshans code for sending email
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             button.disabled = true;
 
-            fetch('/send_email', {
+            fetch('/send_email_for_collection', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
