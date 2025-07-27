@@ -170,3 +170,14 @@ function getCSRFToken() {
 // now i want it to work in such a way that as soon as i click on approve it should get approved ... at the same time it should get hidden from the hod landing page and get displayed in the accepted forms section ........... or ele what we can do is display all the forms accepted and rejected both... after getting accepted or rejected on landing page it should get colored red for reject and green for accept and white means no operation performed ... also they should also be visible in theri respective pages as well... i.e > in accepted and rejected section 
 // or
 // once approved remove approve button from general info page of each User(hod,lib,acc)
+
+
+
+
+Does the tech stack we’re considering (F5-TTS for speech, Wav2Lip for lip-sync) seem appropriate for generating realistic talking human videos?
+
+Are there better or more advanced models available for facial expression and emotion generation in talking head videos?
+
+Can you suggest any pretrained models or toolkits that might help us improve the realness and accuracy of our system?
+
+Based on your expertise in similar projects, what key challenges should we be aware of?

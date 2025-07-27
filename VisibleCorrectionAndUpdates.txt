@@ -57,7 +57,7 @@ also,
 
 12{ payment integration with accounts so that he/she can pay if any dues are left  }
 13{ change the reason of rejection in the html template for acc and lib according to the reason that are relvent to that dept. } DONE
-14 { in lc_gen interface when the email is sent ... the buttons message directly gets converted to collected ... it should be like ... email sent... and then if he actually collects it .... then it should show collected ... for that we need to create 1 more button at the top just like (pending collectioin | generated ) 3rd one should be (Collected).
+14 { in lc_gen interface when the email is sent ... the buttons message directly gets converted to collected ... it should be like ... email sent... and then if student actually collects it .... then it should show collected ... for that we need to create 1 more button at the top just like (pending collectioin | generated ) 3rd one should be (Collected).
 
     mail should be sent to student that he has collectd the LC
 }
